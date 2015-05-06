@@ -1,0 +1,18 @@
+{
+  "name": "cvr",
+  "version": "0.0.1",
+  "description": "code coverage tools",
+  "main": "source/index.js",
+  "scripts": {
+    "test": "mocha --reporter spec",
+    "testcover": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec"
+  },
+  "dependencies": {
+    "github": "^0.2.4",
+    "handlebars": "^3.0.3",
+    "lcov-parse": "0.0.9",
+    "mocha": "^2.2.4",
+    "nodegit": "^0.3.3",
+    "rimraf": "^2.3.3"
+  }
+}
