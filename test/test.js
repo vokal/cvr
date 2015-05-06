@@ -1,6 +1,8 @@
 
 var assert = require( "assert" );
 var cvr = require( "../source" );
+var fs = require( "fs" );
+var path = require( "path" );
 
 var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_TOKEN;
 var gitHubUser = require( "./local.json" ).GITHUB_USER;
@@ -53,8 +55,11 @@ describe( "git", function ()
 
             cvr.parseLCOV( "./test/assets/lcov.info", function ( err, cov )
             {
-                console.log( cov );
-                done();
+                var coverage = cvr.getFileCoverage( cov, coveredFile );
+                cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
+                {
+                    fs.writeFile( path.join( "tmp", "coverage.html" ), result, done );
+                } );
             } )
         } );
     } );

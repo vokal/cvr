@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "github": "^0.2.4",
+    "handlebars": "^3.0.3",
     "lcov-parse": "0.0.9",
     "mocha": "^2.2.4",
     "nodegit": "^0.3.3",

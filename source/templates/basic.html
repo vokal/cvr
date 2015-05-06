@@ -1,0 +1,17 @@
+<html>
+
+<head>
+    <title>{{ title }}</title>
+    <link href="../source/templates/prism.css" rel="stylesheet">
+    <link href="../source/templates/prism-custom.css" rel="stylesheet">
+</head>
+
+<body>
+    <pre data-line="{{ linesCovered }}"
+        data-line-missing="{{ linesMissing }}"><code class="language-{{ extension }}">{{ source }}</code></pre>
+
+    <script src="../source/templates/prism.js"></script>
+    <script src="../source/templates/prism-custom.js"></script>
+</body>
+
+</html>
