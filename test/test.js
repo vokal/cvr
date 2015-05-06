@@ -14,7 +14,7 @@ describe( "git", function ()
 {
     this.timeout( 5000 );
 
-    xit( "should get a list of repos from GitHub", function ( done )
+    it( "should get a list of repos from GitHub", function ( done )
     {
         cvr.getGitHubRepos( accessToken, function ( err, repos )
         {
@@ -34,7 +34,7 @@ describe( "git", function ()
         } );
     } );
 
-    xit( "should get a blob from git", function ( done )
+    it( "should get a blob from git", function ( done )
     {
         cvr.getBlob( gitHubUser, gitHubRepo, null, "README.md", function ( err, blob )
         {
