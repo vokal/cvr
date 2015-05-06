@@ -105,6 +105,7 @@ cvr.getGitHubRepos = function ( accessToken, done )
     } );
 
     //TODO: more than 100
+    //TODO: organizational repos (this only gets profile repos)
     github.repos.getAll( { per_page: 100 }, done );
 };
 
