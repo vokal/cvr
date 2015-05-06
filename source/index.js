@@ -19,7 +19,7 @@ cvr.commitCache = {};
 cvr.getCommit = function ( accessToken, owner, repo, commit, done )
 {
     var commit = commit || "HEAD"; //TODO: using HEAD like this is too general
-    var commitCacheKey = owner + "_" + repo + "/" + commit;
+    var commitCacheKey = owner + "/" + repo + "/" + commit;
     var cachedCommit = cvr.commitCache[ commitCacheKey ];
 
     if( cachedCommit )
@@ -27,7 +27,7 @@ cvr.getCommit = function ( accessToken, owner, repo, commit, done )
         return done( null, cachedCommit );
     }
 
-    var gitUrl = "http://github.com/" + owner + "/" + repo;
+    var gitUrl = "https://github.com/" + owner + "/" + repo;
     var options = {
         remoteCallbacks: {
             credentials: function ()
