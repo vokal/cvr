@@ -1,0 +1,26 @@
+image: docker.vokal.io/node-testing
+env:
+    - BOWER_LOGIN=$$bowerLogin
+    - BOWER_OAUTH=$$bowerOauth
+    - GITHUB_USER=$$bowerLogin
+    - GITHUB_TOKEN=$$bowerOauth
+    - GITHUB_REPO=$$gitHubRepo
+    - COVERED_FILE=$$coveredFile
+script:
+    - echo "machine github.com" > ~/.netrc
+    - echo "login $BOWER_LOGIN" >> ~/.netrc
+    - echo "password $BOWER_OAUTH" >> ~/.netrc
+    - git config --global url."https://github".insteadOf git://github
+    - npm install
+    - bower --allow-root install
+    - chmod +x run-build.sh
+    - ./run-build.sh
+notify:
+    email:
+        recipients:
+            - jarrett.widman@vokal.io
+    webhook:
+        urls:
+            - https://dronebot.vokal.io/hook
+        on_success: true
+        on_failure: true

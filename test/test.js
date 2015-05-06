@@ -5,9 +5,9 @@ var fs = require( "fs" );
 var path = require( "path" );
 
 var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_TOKEN;
-var gitHubUser = require( "./local.json" ).GITHUB_USER;
-var gitHubRepo = require( "./local.json" ).GITHUB_REPO;
-var coveredFile = require( "./local.json" ).COVERED_FILE;
+var gitHubUser = process.env.GITHUB_USER || require( "./local.json" ).GITHUB_USER;
+var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
+var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_FILE;
 
 
 describe( "git", function ()
