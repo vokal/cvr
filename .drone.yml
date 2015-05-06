@@ -12,7 +12,7 @@ script:
     - echo "password $BOWER_OAUTH" >> ~/.netrc
     - git config --global url."https://github".insteadOf git://github
     - npm install
-    - bower --allow-root install
+#    - bower --allow-root install
     - chmod +x run-build.sh
     - ./run-build.sh
 notify:
