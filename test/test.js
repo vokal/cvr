@@ -16,6 +16,7 @@ describe( "git", function ()
 
     it( "should get a list of repos from GitHub", function ( done )
     {
+        this.timeout( 10000 );
         cvr.getGitHubRepos( accessToken, function ( err, repos )
         {
             assert( !err );

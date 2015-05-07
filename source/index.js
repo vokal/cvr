@@ -2,6 +2,7 @@ var git = require( "nodegit" );
 var path = require( "path" );
 var rimraf = require( "rimraf" );
 var fs = require( "fs" );
+var async = require( "async" );
 var lcov = require( "lcov-parse" );
 var githubApi = require( "github" );
 var github = new githubApi( {
@@ -104,9 +105,75 @@ cvr.getGitHubRepos = function ( accessToken, done )
         token: accessToken
     } );
 
+    github.user.getOrgs( { per_page: 100 }, function ( err, orgs )
+    {
+        var fetch = [];
+
+        fetch.push( function ( done )
+        {
+            cvr.getGitHubOwnerRepos( accessToken, done );
+        } );
+
+        orgs.forEach( function ( org )
+        {
+            fetch.push( function ( done )
+            {
+               cvr.getGitHubOrgRepos( accessToken, org.login, done );
+            } );
+        } );
+
+        async.series( fetch, function ( err, results )
+        {
+            var flat = [];
+            results.forEach( function ( r )
+            {
+                flat = flat.concat( r );
+            } );
+            done( null, flat );
+        } )
+    } );
+};
+
+cvr.getGitHubOwnerRepos = function ( accessToken, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
     //TODO: more than 100
-    //TODO: organizational repos (this only gets profile repos)
     github.repos.getAll( { per_page: 100 }, done );
+};
+
+cvr.getGitHubOrgRepos = function ( accessToken, org, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    var results = [];
+
+    var getPage = function ( index )
+    {
+        github.repos.getFromOrg( { per_page: 100, page: index, org: org }, function ( err, result )
+        {
+            results = results.concat( result );
+            if( result.length === 100 )
+            {
+                getPage( index + 1 );
+            }
+            else
+            {
+                done( null, results.sort( function ( a, b )
+                {
+                    return a.full_name < b.full_name ? -1 : a.full_name > b.full_name ? 1 : 0;
+                } ) );
+            }
+        } );
+    };
+
+    getPage( 1 );
 };
 
 cvr.parseLCOV = function ( path, done )
