@@ -8,6 +8,7 @@
     "testcover": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec"
   },
   "dependencies": {
+    "async": "^0.9.0",
     "github": "^0.2.4",
     "handlebars": "^3.0.3",
     "lcov-parse": "0.0.9",
