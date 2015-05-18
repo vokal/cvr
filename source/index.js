@@ -176,9 +176,17 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
     getPage( 1 );
 };
 
-cvr.parseLCOV = function ( path, done )
+var parseLCOV = function ( content, done )
 {
-    lcov( path, done );
+    lcov( content, done );
+};
+
+cvr.getCoverage = function ( content, type, done )
+{
+    if( type === "lcov" )
+    {
+        parseLCOV( content, done );
+    }
 };
 
 cvr.getFileCoverage = function ( coverage, filePath )
@@ -223,9 +231,9 @@ cvr.renderCoverage = function ( coverage, source )
     return lines.join( "\n" );
 };
 
-cvr.formatCoverage = function ( coverage, source, filePath, done )
+cvr.linesCovered = function ( coverage )
 {
-    var linesCovered = coverage.lines.details
+    return coverage.lines.details
         .filter( function ( line )
         {
             return line.hit;
@@ -234,8 +242,11 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         {
             return line.line;
         } );
+};
 
-    var linesMissing = coverage.lines.details
+cvr.linesMissing = function ( coverage )
+{
+    return coverage.lines.details
         .filter( function ( line )
         {
             return line.hit === 0;
@@ -244,6 +255,28 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         {
             return line.line;
         } );
+};
+
+cvr.getFileType = function ( filePath )
+{
+    var types = {
+        bash: "bash",
+        css: "css",
+        go: "go",
+        js: "javascript",
+        less: "less",
+        md: "markdown",
+        python: "python",
+        sql: "sql"
+    };
+
+    return types[ path.extname( filePath ).replace( ".", "" ) ] || "clike"
+};
+
+cvr.formatCoverage = function ( coverage, source, filePath, done )
+{
+    var linesCovered = cvr.linesCovered( coverage );
+    var linesMissing = cvr.linesMissing( coverage );
 
     fs.readFile( path.join( "source", "templates", "basic.html" ),
         { encoding: "utf8" },
@@ -251,21 +284,10 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
     {
         var template = handlebars.compile( content );
 
-        var types = {
-            bash: "bash",
-            css: "css",
-            go: "go",
-            js: "javascript",
-            less: "less",
-            md: "markdown",
-            python: "python",
-            sql: "sql"
-        };
-
         done( null, template( {
             source: source,
             title: filePath,
-            extension: types[ path.extname( filePath ).replace( ".", "" ) ] || "clike",
+            extension: cvr.getFileType( filePath ),
             linesCovered: linesCovered.join( "," ),
             linesMissing: linesMissing.join( "," )
         } ) );
