@@ -76,7 +76,7 @@ cvr.getGitHubRepos = function ( accessToken, done )
                 flat = flat.concat( r );
             } );
             done( null, flat );
-        } )
+        } );
     } );
 };
 
@@ -133,6 +133,20 @@ cvr.getCoverage = function ( content, type, done )
     {
         parseLCOV( content, done );
     }
+};
+
+cvr.getLineCoveragePercent = function ( coverageArray )
+{
+    var found = 0;
+    var hit = 0;
+
+    coverageArray.forEach( function ( c )
+    {
+        found += c.lines.found;
+        hit += c.lines.hit;
+    } );
+
+    return hit / found * 100;
 };
 
 cvr.getFileCoverage = function ( coverage, filePath )
