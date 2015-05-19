@@ -2,6 +2,7 @@ var git = require( "nodegit" );
 var path = require( "path" );
 var rimraf = require( "rimraf" );
 var fs = require( "fs" );
+var atob = require( "atob" );
 var async = require( "async" );
 var lcov = require( "lcov-parse" );
 var githubApi = require( "github" );
@@ -15,90 +16,31 @@ var cvr = {};
 
 module.exports = cvr;
 
-cvr.commitCache = {};
-
-cvr.getCommit = function ( accessToken, owner, repo, commit, done )
+cvr.getGitHubFile = function ( accessToken, owner, repoName, commitHash, filePath, done )
 {
-    var commit = commit || "HEAD"; //TODO: using HEAD like this is too general
-    var commitCacheKey = owner + "/" + repo + "/" + commit;
-    var cachedCommit = cvr.commitCache[ commitCacheKey ];
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
 
-    if( cachedCommit )
-    {
-        return done( null, cachedCommit );
-    }
-
-    var gitUrl = "https://github.com/" + owner + "/" + repo;
-    var options = {
-        remoteCallbacks: {
-            credentials: function ()
-            {
-                return git.Cred.userpassPlaintextNew( accessToken, "x-oauth-basic" );
-            },
-            certificateCheck: function ()
-            {
-                return 1;
-            }
-        }
-    };
-
-    if( !fs.existsSync( path.join( "tmp" ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp" ) );
-    }
-    if( !fs.existsSync( path.join( "tmp", owner ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp", owner ) );
-    }
-    if( !fs.existsSync( path.join( "tmp", owner, repo ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp", owner, repo ) );
-    }
-
-    var tmp = path.join( "tmp", owner, repo, commit );
-    rimraf.sync( tmp );
-
-
-    var result = git.Clone.clone( gitUrl, tmp, options )
-        .then( function( repo )
-        {
-            if( commit === "HEAD" )
-            {
-                return git.Reference.nameToId( repo, commit )
-                    .then( function ( commitOid )
-                    {
-                        return git.Commit.lookup( repo, commitOid );
-                    } );
-            }
-            return git.Commit.lookup( repo, commit );
-        } )
-        .then( function ( commit )
-        {
-            cvr.commitCache[ commitCacheKey ] = commit;
-            done( null, commit );
-        } )
-        .catch( done );
-};
-
-cvr.getBlob = function ( accessToken, owner, repo, commit, fileName, done )
-{
-    cvr.getCommit( accessToken, owner, repo, commit, function ( err, commit )
+    github.repos.getContent({
+        user: owner,
+        repo: repoName,
+        ref: commitHash || "master",
+        path: filePath
+    }, function ( err, res )
     {
         if( err )
         {
             return done( err );
         }
 
-        commit.getEntry( fileName )
-            .then( function( entry )
-            {
-                return entry.getBlob().then( function( blob )
-                {
-                    done( null, blob );
-                } )
-                .catch( done );
-            } )
-            .catch( done );
+        if( res.encoding === "base64" )
+        {
+            res.content = atob( res.content );
+        }
+
+        done( null, res.content );
     } );
 };
 
