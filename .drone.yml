@@ -5,7 +5,7 @@ env:
     - GITHUB_USER=$$bowerLogin
     - GITHUB_TOKEN=$$bowerOauth
     - GITHUB_REPO=$$gitHubRepo
-    - COVERED_REPO_OWNER=$$gitHubRepoOwner
+    - GITHUB_REPO_OWNER=$$gitHubRepoOwner
     - COVERED_FILE=$$coveredFile
     - COMMIT_HASH=$$commitHash
 script:
