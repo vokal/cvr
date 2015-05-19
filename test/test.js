@@ -51,6 +51,7 @@ describe( "git", function ()
                     var coverage = cvr.getFileCoverage( cov, coveredFile );
                     cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
                     {
+                        fs.mkdirSync( path.join( "tmp" ) );
                         fs.writeFile( path.join( "tmp", "coverage.html" ), result, done );
                     } );
                 } );
