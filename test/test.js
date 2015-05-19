@@ -4,13 +4,12 @@ var cvr = require( "../source" );
 var fs = require( "fs" );
 var path = require( "path" );
 
-var localSettings = require( "./local.json" );
-var accessToken = process.env.GITHUB_TOKEN || localSettings.GITHUB_TOKEN;
-var gitHubUser = process.env.GITHUB_USER || localSettings.GITHUB_USER;
-var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || localSettings.GITHUB_REPO_OWNER;
-var gitHubRepo = process.env.GITHUB_REPO || localSettings.GITHUB_REPO;
-var coveredFile = process.env.COVERED_FILE || localSettings.COVERED_FILE;
-var commitHash = process.env.COMMIT_HASH || localSettings.COMMIT_HASH;
+var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_TOKEN;
+var gitHubUser = process.env.GITHUB_USER || require( "./local.json" ).GITHUB_USER;
+var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || require( "./local.json" ).GITHUB_REPO_OWNER;
+var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
+var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_FILE;
+var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HASH;
 
 
 describe( "git", function ()
