@@ -12,7 +12,7 @@ var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_
 
 describe( "git", function ()
 {
-    xit( "should get a list of repos from GitHub", function ( done )
+    it( "should get a list of repos from GitHub", function ( done )
     {
         this.timeout( 10000 );
         cvr.getGitHubRepos( accessToken, function ( err, repos )
@@ -34,9 +34,9 @@ describe( "git", function ()
         } );
     } );
 
-    xit( "should get a blob from git", function ( done )
+    it( "should get a blob from git", function ( done )
     {
-        cvr.getBlob( gitHubUser, gitHubRepo, null, "README.md", function ( err, blob )
+        cvr.getBlob( null, gitHubUser, gitHubRepo, null, "README.md", function ( err, blob )
         {
             assert( !err );
             assert( !!String( blob ) );
@@ -46,7 +46,7 @@ describe( "git", function ()
 
     it( "should create a coverage report for a file", function ( done )
     {
-        cvr.getBlob( gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
+        cvr.getBlob( null, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
         {
             assert.equal( !!err, false );
             assert.equal( !!String( blob ), true );

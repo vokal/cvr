@@ -62,11 +62,15 @@ cvr.getCommit = function ( accessToken, owner, repo, commit, done )
     var result = git.Clone.clone( gitUrl, tmp, options )
         .then( function( repo )
         {
-            return git.Reference.nameToId( repo, commit )
-                .then( function ( commitOid )
-                {
-                    return git.Commit.lookup( repo, commitOid );
-                } );
+            if( commit === "HEAD" )
+            {
+                return git.Reference.nameToId( repo, commit )
+                    .then( function ( commitOid )
+                    {
+                        return git.Commit.lookup( repo, commitOid );
+                    } );
+            }
+            return git.Commit.lookup( repo, commit );
         } )
         .then( function ( commit )
         {
@@ -76,9 +80,9 @@ cvr.getCommit = function ( accessToken, owner, repo, commit, done )
         .catch( done );
 };
 
-cvr.getBlob = function ( owner, repo, commit, fileName, done )
+cvr.getBlob = function ( accessToken, owner, repo, commit, fileName, done )
 {
-    cvr.getCommit( null, owner, repo, commit, function ( err, commit )
+    cvr.getCommit( accessToken, owner, repo, commit, function ( err, commit )
     {
         if( err )
         {
@@ -270,7 +274,7 @@ cvr.getFileType = function ( filePath )
         sql: "sql"
     };
 
-    return types[ path.extname( filePath ).replace( ".", "" ) ] || "clike"
+    return types[ path.extname( filePath ).replace( ".", "" ) ] || "clike";
 };
 
 cvr.formatCoverage = function ( coverage, source, filePath, done )
