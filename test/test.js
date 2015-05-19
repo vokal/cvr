@@ -6,14 +6,14 @@ var path = require( "path" );
 
 var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_TOKEN;
 var gitHubUser = process.env.GITHUB_USER || require( "./local.json" ).GITHUB_USER;
+var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || require( "./local.json" ).GITHUB_REPO_OWNER;
 var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
 var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_FILE;
+var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HASH;
 
 
 describe( "git", function ()
 {
-    this.timeout( 5000 );
-
     it( "should get a list of repos from GitHub", function ( done )
     {
         this.timeout( 10000 );
@@ -25,44 +25,37 @@ describe( "git", function ()
         } );
     } );
 
-    it( "should get a commit from git", function ( done )
+    it( "should get a file from github", function ( done )
     {
-        cvr.getCommit( accessToken, gitHubUser, gitHubRepo, null, function ( err, commit )
+        cvr.getGitHubFile( accessToken, gitHubRepoOwner, gitHubRepo, commitHash, "README.md", function ( err, res )
         {
             assert( !err );
-            assert( commit != null );
-            done();
-        } );
-    } );
-
-    it( "should get a blob from git", function ( done )
-    {
-        cvr.getBlob( gitHubUser, gitHubRepo, null, "README.md", function ( err, blob )
-        {
-            assert( !err );
-            assert( !!String( blob ) );
+            assert( !!res );
             done();
         } );
     } );
 
     it( "should create a coverage report for a file", function ( done )
     {
-        cvr.getBlob( gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
+        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
         {
             assert.equal( !!err, false );
             assert.equal( !!String( blob ), true );
 
             var text = String( blob );
 
-            cvr.parseLCOV( "./test/assets/lcov.info", function ( err, cov )
+            fs.readFile( "./test/assets/lcov.info", { encoding: "utf8" }, function ( err, content )
             {
-                var coverage = cvr.getFileCoverage( cov, coveredFile );
-                cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
+                cvr.getCoverage( content, "lcov", function ( err, cov )
                 {
-                    fs.writeFile( path.join( "tmp", "coverage.html" ), result, done );
+                    var coverage = cvr.getFileCoverage( cov, coveredFile );
+                    cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
+                    {
+                        fs.mkdirSync( path.join( "tmp" ) );
+                        fs.writeFile( path.join( "tmp", "coverage.html" ), result, done );
+                    } );
                 } );
             } )
         } );
     } );
-
 } );

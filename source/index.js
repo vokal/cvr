@@ -2,6 +2,7 @@ var git = require( "nodegit" );
 var path = require( "path" );
 var rimraf = require( "rimraf" );
 var fs = require( "fs" );
+var atob = require( "atob" );
 var async = require( "async" );
 var lcov = require( "lcov-parse" );
 var githubApi = require( "github" );
@@ -15,86 +16,31 @@ var cvr = {};
 
 module.exports = cvr;
 
-cvr.commitCache = {};
-
-cvr.getCommit = function ( accessToken, owner, repo, commit, done )
+cvr.getGitHubFile = function ( accessToken, owner, repoName, commitHash, filePath, done )
 {
-    var commit = commit || "HEAD"; //TODO: using HEAD like this is too general
-    var commitCacheKey = owner + "/" + repo + "/" + commit;
-    var cachedCommit = cvr.commitCache[ commitCacheKey ];
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
 
-    if( cachedCommit )
-    {
-        return done( null, cachedCommit );
-    }
-
-    var gitUrl = "https://github.com/" + owner + "/" + repo;
-    var options = {
-        remoteCallbacks: {
-            credentials: function ()
-            {
-                return git.Cred.userpassPlaintextNew( accessToken, "x-oauth-basic" );
-            },
-            certificateCheck: function ()
-            {
-                return 1;
-            }
-        }
-    };
-
-    if( !fs.existsSync( path.join( "tmp" ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp" ) );
-    }
-    if( !fs.existsSync( path.join( "tmp", owner ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp", owner ) );
-    }
-    if( !fs.existsSync( path.join( "tmp", owner, repo ) ) )
-    {
-        fs.mkdirSync( path.join( "tmp", owner, repo ) );
-    }
-
-    var tmp = path.join( "tmp", owner, repo, commit );
-    rimraf.sync( tmp );
-
-
-    var result = git.Clone.clone( gitUrl, tmp, options )
-        .then( function( repo )
-        {
-            return git.Reference.nameToId( repo, commit )
-                .then( function ( commitOid )
-                {
-                    return git.Commit.lookup( repo, commitOid );
-                } );
-        } )
-        .then( function ( commit )
-        {
-            cvr.commitCache[ commitCacheKey ] = commit;
-            done( null, commit );
-        } )
-        .catch( done );
-};
-
-cvr.getBlob = function ( owner, repo, commit, fileName, done )
-{
-    cvr.getCommit( null, owner, repo, commit, function ( err, commit )
+    github.repos.getContent({
+        user: owner,
+        repo: repoName,
+        ref: commitHash || "master",
+        path: filePath
+    }, function ( err, res )
     {
         if( err )
         {
             return done( err );
         }
 
-        commit.getEntry( fileName )
-            .then( function( entry )
-            {
-                return entry.getBlob().then( function( blob )
-                {
-                    done( null, blob );
-                } )
-                .catch( done );
-            } )
-            .catch( done );
+        if( res.encoding === "base64" )
+        {
+            res.content = atob( res.content );
+        }
+
+        done( null, res.content );
     } );
 };
 
@@ -130,7 +76,7 @@ cvr.getGitHubRepos = function ( accessToken, done )
                 flat = flat.concat( r );
             } );
             done( null, flat );
-        } )
+        } );
     } );
 };
 
@@ -176,9 +122,31 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
     getPage( 1 );
 };
 
-cvr.parseLCOV = function ( path, done )
+var parseLCOV = function ( content, done )
 {
-    lcov( path, done );
+    lcov( content, done );
+};
+
+cvr.getCoverage = function ( content, type, done )
+{
+    if( type === "lcov" )
+    {
+        parseLCOV( content, done );
+    }
+};
+
+cvr.getLineCoveragePercent = function ( coverageArray )
+{
+    var found = 0;
+    var hit = 0;
+
+    coverageArray.forEach( function ( c )
+    {
+        found += c.lines.found;
+        hit += c.lines.hit;
+    } );
+
+    return hit / found * 100;
 };
 
 cvr.getFileCoverage = function ( coverage, filePath )
@@ -223,9 +191,9 @@ cvr.renderCoverage = function ( coverage, source )
     return lines.join( "\n" );
 };
 
-cvr.formatCoverage = function ( coverage, source, filePath, done )
+cvr.linesCovered = function ( coverage )
 {
-    var linesCovered = coverage.lines.details
+    return coverage.lines.details
         .filter( function ( line )
         {
             return line.hit;
@@ -234,8 +202,11 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         {
             return line.line;
         } );
+};
 
-    var linesMissing = coverage.lines.details
+cvr.linesMissing = function ( coverage )
+{
+    return coverage.lines.details
         .filter( function ( line )
         {
             return line.hit === 0;
@@ -244,6 +215,28 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         {
             return line.line;
         } );
+};
+
+cvr.getFileType = function ( filePath )
+{
+    var types = {
+        bash: "bash",
+        css: "css",
+        go: "go",
+        js: "javascript",
+        less: "less",
+        md: "markdown",
+        python: "python",
+        sql: "sql"
+    };
+
+    return types[ path.extname( filePath ).replace( ".", "" ) ] || "clike";
+};
+
+cvr.formatCoverage = function ( coverage, source, filePath, done )
+{
+    var linesCovered = cvr.linesCovered( coverage );
+    var linesMissing = cvr.linesMissing( coverage );
 
     fs.readFile( path.join( "source", "templates", "basic.html" ),
         { encoding: "utf8" },
@@ -251,21 +244,10 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
     {
         var template = handlebars.compile( content );
 
-        var types = {
-            bash: "bash",
-            css: "css",
-            go: "go",
-            js: "javascript",
-            less: "less",
-            md: "markdown",
-            python: "python",
-            sql: "sql"
-        };
-
         done( null, template( {
             source: source,
             title: filePath,
-            extension: types[ path.extname( filePath ).replace( ".", "" ) ] || "clike",
+            extension: cvr.getFileType( filePath ),
             linesCovered: linesCovered.join( "," ),
             linesMissing: linesMissing.join( "," )
         } ) );
