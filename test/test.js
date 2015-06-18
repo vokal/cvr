@@ -1,3 +1,4 @@
+"use strict";
 
 var assert = require( "assert" );
 var cvr = require( "../source" );
@@ -35,7 +36,7 @@ describe( "git", function ()
         } );
     } );
 
-    it( "should create a coverage report for a file", function ( done )
+    it( "should create a coverage report for a LCOV file", function ( done )
     {
         cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
         {
@@ -51,11 +52,39 @@ describe( "git", function ()
                     var coverage = cvr.getFileCoverage( cov, coveredFile );
                     cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
                     {
-                        fs.mkdirSync( path.join( "tmp" ) );
-                        fs.writeFile( path.join( "tmp", "coverage.html" ), result, done );
+                        fs.mkdir( path.join( "tmp" ), function ()
+                        {
+                            fs.writeFile( path.join( "tmp", "coverage-lcov.html" ), result, done );
+                        } );
                     } );
                 } );
-            } )
+            } );
+        } );
+    } );
+
+    it( "should create a coverage report for a Cobertura file", function ( done )
+    {
+        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
+        {
+            assert.equal( !!err, false );
+            assert.equal( !!String( blob ), true );
+
+            var text = String( blob );
+
+            fs.readFile( "./test/assets/cobertura.xml", { encoding: "utf8" }, function ( err, content )
+            {
+                cvr.getCoverage( content, "cobertura", function ( err, cov )
+                {
+                    var coverage = cvr.getFileCoverage( cov, coveredFile );
+                    cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
+                    {
+                        fs.mkdir( path.join( "tmp" ), function ()
+                        {
+                            fs.writeFile( path.join( "tmp", "coverage-cobertura.html" ), result, done );
+                        } );
+                    } );
+                } );
+            } );
         } );
     } );
 } );

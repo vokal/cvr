@@ -1,10 +1,11 @@
-var git = require( "nodegit" );
+"use strict";
+
 var path = require( "path" );
-var rimraf = require( "rimraf" );
 var fs = require( "fs" );
 var atob = require( "atob" );
 var async = require( "async" );
 var lcov = require( "lcov-parse" );
+var cobertura = require( "cobertura-parse" );
 var githubApi = require( "github" );
 var github = new githubApi( {
     version: "3.0.0"
@@ -122,16 +123,15 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
     getPage( 1 );
 };
 
-var parseLCOV = function ( content, done )
-{
-    lcov( content, done );
-};
-
 cvr.getCoverage = function ( content, type, done )
 {
     if( type === "lcov" )
     {
-        parseLCOV( content, done );
+        lcov( content, done );
+    }
+    else if( type === "cobertura" )
+    {
+        cobertura.parseContent( content, done );
     }
 };
 
@@ -152,9 +152,9 @@ cvr.getLineCoveragePercent = function ( coverageArray )
 cvr.getFileCoverage = function ( coverage, filePath )
 {
     return coverage.filter( function ( c )
-            {
-                return c.file === filePath;
-            } )[ 0 ];
+    {
+        return c.file === filePath;
+    } )[ 0 ];
 };
 
 cvr.getLine = function ( lineCoverage, line )
