@@ -1,4 +1,4 @@
-image: docker.vokal.io/node-testing
+image: docker.vokal.io/web-testing
 env:
     - BOWER_LOGIN=$$bowerLogin
     - BOWER_OAUTH=$$bowerOauth
