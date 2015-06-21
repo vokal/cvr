@@ -8,13 +8,14 @@ env:
     - GITHUB_REPO_OWNER=$$gitHubRepoOwner
     - COVERED_FILE=$$coveredFile
     - COMMIT_HASH=$$commitHash
+    - CVR_TOKEN=$$cvrToken
 script:
     - echo "machine github.com" > ~/.netrc
     - echo "login $BOWER_LOGIN" >> ~/.netrc
     - echo "password $BOWER_OAUTH" >> ~/.netrc
     - git config --global url."https://github".insteadOf git://github
+    - npm install -g istanbul
     - npm install
-#    - bower --allow-root install
     - chmod +x run-build.sh
     - ./run-build.sh
 notify:
