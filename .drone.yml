@@ -14,6 +14,7 @@ script:
     - echo "login $BOWER_LOGIN" >> ~/.netrc
     - echo "password $BOWER_OAUTH" >> ~/.netrc
     - git config --global url."https://github".insteadOf git://github
+    - npm install -g istanbul
     - npm install
     - chmod +x run-build.sh
     - ./run-build.sh
