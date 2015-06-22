@@ -7,28 +7,54 @@ Code Coverage
 **Full docs needed**
 
 
-### cvr.getGitHubFile = function ( accessToken, owner, repoName, commitHash, filePath, done )
+### cvr.getGitHubFile
 
-### cvr.getGitHubRepos = function ( accessToken, done )
+function ( accessToken, owner, repoName, commitHash, filePath, done )
 
-### cvr.getGitHubOwnerRepos = function ( accessToken, done )
+### cvr.getGitHubRepos
 
-### cvr.getGitHubOrgRepos = function ( accessToken, org, done )
+function ( accessToken, done )
 
-### cvr.getCoverage = function ( content, type, done )
+### cvr.getGitHubOwnerRepos
 
-### cvr.getLineCoveragePercent = function ( coverageArray )
+function ( accessToken, done )
 
-### cvr.getFileCoverage = function ( coverage, filePath )
+### cvr.getGitHubOrgRepos
 
-### cvr.getLine = function ( lineCoverage, line )
+function ( accessToken, org, done )
 
-### cvr.renderCoverage = function ( coverage, source )
+### cvr.getCoverage
 
-### cvr.linesCovered = function ( coverage )
+function ( content, type, done )
 
-### cvr.linesMissing = function ( coverage )
+### cvr.getLineCoveragePercent
 
-### cvr.getFileType = function ( filePath )
+function ( coverageArray )
 
-### cvr.formatCoverage = function ( coverage, source, filePath, done )
+### cvr.getFileCoverage
+
+function ( coverage, filePath )
+
+### cvr.getLine
+
+function ( lineCoverage, line )
+
+### cvr.renderCoverage
+
+function ( coverage, source )
+
+### cvr.linesCovered
+
+function ( coverage )
+
+### cvr.linesMissing
+
+function ( coverage )
+
+### cvr.getFileType
+
+function ( filePath )
+
+### cvr.formatCoverage
+
+function ( coverage, source, filePath, done )
