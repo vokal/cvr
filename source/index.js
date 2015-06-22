@@ -133,6 +133,10 @@ cvr.getCoverage = function ( content, type, done )
     {
         cobertura.parseContent( content, done );
     }
+    else
+    {
+        done( new Error( "Coverage Type Unavailable: " + type ) );
+    }
 };
 
 cvr.getLineCoveragePercent = function ( coverageArray )
