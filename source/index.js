@@ -257,3 +257,21 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         } ) );
     } );
 };
+
+cvr.removePath = function ( coverage, path )
+{
+    var exp = new RegExp( path.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&" ), "g" );
+    return coverage.replace( exp, "" );
+};
+
+cvr.prependPath = function ( coverage, path, coverageType )
+{
+    if( coverageType === "cobertura" )
+    {
+        return coverage.replace( /filename="/g, "filename=\"" + path );
+    }
+
+    // default to lcov
+    return coverage.replace( /SF:/g, "SF:" + path );
+};
+
