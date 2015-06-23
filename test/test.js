@@ -87,4 +87,22 @@ describe( "git", function ()
             } );
         } );
     } );
+
+    it( "should prepend paths", function ()
+    {
+        assert.equal(
+            cvr.prependPath(
+                '<class name="app.js" filename="source/scripts/project/app.js" line-rate="0.9459000000000001">',
+                "project/", "cobertura" ),
+                '<class name="app.js" filename="project/source/scripts/project/app.js" line-rate="0.9459000000000001">' );
+    } );
+
+    it( "should remove paths", function ()
+    {
+        assert.equal(
+            cvr.removePath(
+                "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
+                "source/scripts/", "lcov" ),
+                "TN:\nSF:project/app.js\nFN:5,(anonymous_1)" );
+    } );
 } );
