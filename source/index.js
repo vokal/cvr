@@ -52,7 +52,7 @@ cvr.getGitHubRepos = function ( accessToken, done )
         token: accessToken
     } );
 
-    github.user.getOrgs( { per_page: 100 }, function ( err, orgs )
+    cvr.getGitHubOrgs( accessToken, function ( err, orgs )
     {
         var fetch = [];
 
@@ -79,6 +79,16 @@ cvr.getGitHubRepos = function ( accessToken, done )
             done( null, flat );
         } );
     } );
+};
+
+cvr.getGitHubOrgs = function ( accessToken, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    github.user.getOrgs( { per_page: 100 }, done );
 };
 
 cvr.getGitHubOwnerRepos = function ( accessToken, done )
