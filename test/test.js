@@ -116,4 +116,20 @@ describe( "git", function ()
             done();
         } );
     } );
+
+    it( "should create a status", function ( done )
+    {
+        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "pending", function ( err, res )
+        {
+            assert.equal( err, null );
+            assert.equal( res.state, "pending" );
+
+            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "success", function ( err, res )
+            {
+                assert.equal( err, null );
+                assert.equal( res.state, "success" );
+                done();
+            } );
+        } );
+    } );
 } );
