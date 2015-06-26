@@ -11,6 +11,7 @@ var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || require( "./local.json" )
 var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
 var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_FILE;
 var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HASH;
+var webhookUrl = process.env.WEBHOOK_URL || require( "./local.json" ).WEBHOOK_URL;
 
 
 describe( "git", function ()
@@ -104,5 +105,15 @@ describe( "git", function ()
                 "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
                 "source/scripts/", "lcov" ),
                 "TN:\nSF:project/app.js\nFN:5,(anonymous_1)" );
+    } );
+
+    it( "should register a webhook", function ( done )
+    {
+        cvr.createGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
+        {
+            assert.equal( err, null );
+            assert.equal( res.config.url, webhookUrl );
+            done();
+        } );
     } );
 } );
