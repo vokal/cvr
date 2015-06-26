@@ -9,6 +9,7 @@ env:
     - COVERED_FILE=$$coveredFile
     - COMMIT_HASH=$$commitHash
     - CVR_TOKEN=$$cvrToken
+    - WEBHOOK_URL=$$webhookUrl
 script:
     - echo "machine github.com" > ~/.netrc
     - echo "login $BOWER_LOGIN" >> ~/.netrc
