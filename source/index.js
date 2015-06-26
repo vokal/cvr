@@ -133,6 +133,70 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
     getPage( 1 );
 };
 
+cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    var onHooks = function ( err, res )
+    {
+        if( err )
+        {
+            return done ( err );
+        }
+
+        var existingHook = res.filter( function ( r )
+        {
+            return r.config.url === hookUrl;
+        } )[ 0 ];
+
+        if( existingHook )
+        {
+            return done( null, existingHook );
+        }
+
+        github.repos.createHook( {
+            user: owner,
+            repo: repoName,
+            name: "web",
+            events: [
+              "push",
+              "pull_request"
+            ],
+            config: {
+              url: hookUrl,
+              content_type: "json"
+            }
+        }, done );
+    };
+
+    github.repos.getHooks( {
+        user: owner,
+        repo: repoName,
+        page: 1,
+        per_page: 100
+    }, onHooks );
+
+};
+
+cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    github.statuses.create( {
+        user: userName,
+        repo: repoName,
+        sha: hash,
+        state: state,
+        context: "cvr"
+    }, done );
+};
+
 cvr.getCoverage = function ( content, type, done )
 {
     if( type === "lcov" )
