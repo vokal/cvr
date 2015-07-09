@@ -105,12 +105,14 @@ describe( "git", function ()
 
     it( "should create a status", function ( done )
     {
-        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "pending", function ( err, res )
+        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
+            "pending", "code coverage pending", function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.state, "pending" );
 
-            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "success", function ( err, res )
+            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
+                "success", "code coverage meets minimum", function ( err, res )
             {
                 assert.equal( err, null );
                 assert.equal( res.state, "success" );

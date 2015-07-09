@@ -182,7 +182,7 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
 
 };
 
-cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, done )
+cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, description, done )
 {
     github.authenticate( {
         type: "oauth",
@@ -194,7 +194,8 @@ cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state
         repo: repoName,
         sha: hash,
         state: state,
-        context: "cvr"
+        context: "cvr",
+        description: description
     }, done );
 };
 
