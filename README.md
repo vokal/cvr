@@ -1,6 +1,6 @@
 # cvr
 
-Code Coverage
+Code coverage tools.
 
 ## Usage
 
