@@ -6,6 +6,7 @@ var atob = require( "atob" );
 var async = require( "async" );
 var lcov = require( "lcov-parse" );
 var cobertura = require( "cobertura-parse" );
+var jacoco = require( "jacoco-parse" );
 var githubApi = require( "github" );
 var github = new githubApi( {
     version: "3.0.0"
@@ -181,7 +182,7 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
 
 };
 
-cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, done )
+cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, description, done )
 {
     github.authenticate( {
         type: "oauth",
@@ -193,7 +194,8 @@ cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state
         repo: repoName,
         sha: hash,
         state: state,
-        context: "cvr"
+        context: "cvr",
+        description: description
     }, done );
 };
 
@@ -206,6 +208,10 @@ cvr.getCoverage = function ( content, type, done )
     else if( type === "cobertura" )
     {
         cobertura.parseContent( content, done );
+    }
+    else if( type === "jacoco" )
+    {
+        jacoco.parseContent( content, done );
     }
     else
     {
@@ -340,6 +346,13 @@ cvr.removePath = function ( coverage, path )
 
 cvr.prependPath = function ( coverage, path, coverageType )
 {
+    if( coverageType === "jacoco" )
+    {
+        return coverage
+            .replace( /class name="/g, "class name=\"" + path )
+            .replace( /package name="/g, "package name=\"" + path );
+    }
+
     if( coverageType === "cobertura" )
     {
         return coverage.replace( /filename="/g, "filename=\"" + path );

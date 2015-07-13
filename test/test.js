@@ -9,9 +9,38 @@ var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_T
 var gitHubUser = process.env.GITHUB_USER || require( "./local.json" ).GITHUB_USER;
 var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || require( "./local.json" ).GITHUB_REPO_OWNER;
 var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
-var coveredFile = process.env.COVERED_FILE || require( "./local.json" ).COVERED_FILE;
 var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HASH;
 var webhookUrl = process.env.WEBHOOK_URL || require( "./local.json" ).WEBHOOK_URL;
+
+
+var getTestReporter = function ( sourceFile, format, coveredFile )
+{
+    return function ( done )
+    {
+        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
+        {
+            assert.equal( !!err, false );
+            assert.equal( !!String( blob ), true );
+
+            var text = String( blob );
+
+            fs.readFile( sourceFile, { encoding: "utf8" }, function ( err, content )
+            {
+                cvr.getCoverage( content, format, function ( err, cov )
+                {
+                    var coverage = cvr.getFileCoverage( cov, coveredFile );
+                    cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
+                    {
+                        fs.mkdir( path.join( "tmp" ), function ()
+                        {
+                            fs.writeFile( path.join( "tmp", "coverage-" + format + ".html" ), result, done );
+                        } );
+                    } );
+                } );
+            } );
+        } );
+    };
+};
 
 
 describe( "git", function ()
@@ -37,57 +66,14 @@ describe( "git", function ()
         } );
     } );
 
-    it( "should create a coverage report for a LCOV file", function ( done )
-    {
-        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
-        {
-            assert.equal( !!err, false );
-            assert.equal( !!String( blob ), true );
+    it( "should create a coverage report for a LCOV file",
+        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js" ) );
 
-            var text = String( blob );
+    it( "should create a coverage report for a Cobertura file",
+        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js" ) );
 
-            fs.readFile( "./test/assets/lcov.info", { encoding: "utf8" }, function ( err, content )
-            {
-                cvr.getCoverage( content, "lcov", function ( err, cov )
-                {
-                    var coverage = cvr.getFileCoverage( cov, coveredFile );
-                    cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
-                    {
-                        fs.mkdir( path.join( "tmp" ), function ()
-                        {
-                            fs.writeFile( path.join( "tmp", "coverage-lcov.html" ), result, done );
-                        } );
-                    } );
-                } );
-            } );
-        } );
-    } );
-
-    it( "should create a coverage report for a Cobertura file", function ( done )
-    {
-        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
-        {
-            assert.equal( !!err, false );
-            assert.equal( !!String( blob ), true );
-
-            var text = String( blob );
-
-            fs.readFile( "./test/assets/cobertura.xml", { encoding: "utf8" }, function ( err, content )
-            {
-                cvr.getCoverage( content, "cobertura", function ( err, cov )
-                {
-                    var coverage = cvr.getFileCoverage( cov, coveredFile );
-                    cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
-                    {
-                        fs.mkdir( path.join( "tmp" ), function ()
-                        {
-                            fs.writeFile( path.join( "tmp", "coverage-cobertura.html" ), result, done );
-                        } );
-                    } );
-                } );
-            } );
-        } );
-    } );
+    it( "should create a coverage report for a jacoco file",
+        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js" ) );
 
     it( "should prepend paths", function ()
     {
@@ -119,12 +105,14 @@ describe( "git", function ()
 
     it( "should create a status", function ( done )
     {
-        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "pending", function ( err, res )
+        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
+            "pending", "code coverage pending", function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.state, "pending" );
 
-            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash, "success", function ( err, res )
+            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
+                "success", "code coverage meets minimum", function ( err, res )
             {
                 assert.equal( err, null );
                 assert.equal( res.state, "success" );
