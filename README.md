@@ -58,3 +58,7 @@ function ( filePath )
 ### cvr.formatCoverage
 
 function ( coverage, source, filePath, done )
+
+### cvr.createGitHubStatus
+
+function ( accessToken, userName, repoName, hash, state, description, done )
