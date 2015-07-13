@@ -65,7 +65,7 @@ describe( "git", function ()
             done();
         } );
     } );
-
+/*
     it( "should create a coverage report for a LCOV file",
         getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js" ) );
 
@@ -120,4 +120,5 @@ describe( "git", function ()
             } );
         } );
     } );
+*/
 } );
