@@ -105,14 +105,25 @@ describe( "git", function ()
 
     it( "should create a status", function ( done )
     {
-        cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
-            "pending", "code coverage pending", function ( err, res )
+        var statusMessage = {
+            user: gitHubUser,
+            repo: gitHubRepo,
+            sha: commitHash,
+            state: "pending",
+            context: "cvr",
+            description: "code coverage pending",
+            target_url: "http://vokal.io"
+        };
+
+        cvr.createGitHubStatus( accessToken, statusMessage, function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.state, "pending" );
 
-            cvr.createGitHubStatus( accessToken, gitHubUser, gitHubRepo, commitHash,
-                "success", "code coverage meets minimum", function ( err, res )
+            statusMessage.state = "success";
+            statusMessage.description = "code coverage meets minimum";
+
+            cvr.createGitHubStatus( accessToken, statusMessage, function ( err, res )
             {
                 assert.equal( err, null );
                 assert.equal( res.state, "success" );

@@ -58,3 +58,9 @@ function ( filePath )
 ### cvr.formatCoverage
 
 function ( coverage, source, filePath, done )
+
+### cvr.createGitHubStatus
+
+function ( accessToken, message, done )
+
+`message` follows http://mikedeboer.github.io/node-github/#statuses.prototype.create and is passed along directly.
