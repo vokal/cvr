@@ -182,21 +182,14 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
 
 };
 
-cvr.createGitHubStatus = function ( accessToken, userName, repoName, hash, state, description, done )
+cvr.createGitHubStatus = function ( accessToken, message, done )
 {
     github.authenticate( {
         type: "oauth",
         token: accessToken
     } );
 
-    github.statuses.create( {
-        user: userName,
-        repo: repoName,
-        sha: hash,
-        state: state,
-        context: "cvr",
-        description: description
-    }, done );
+    github.statuses.create( message, done );
 };
 
 cvr.getCoverage = function ( content, type, done )

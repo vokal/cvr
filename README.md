@@ -61,4 +61,6 @@ function ( coverage, source, filePath, done )
 
 ### cvr.createGitHubStatus
 
-function ( accessToken, userName, repoName, hash, state, description, done )
+function ( accessToken, message, done )
+
+`message` follows http://mikedeboer.github.io/node-github/#statuses.prototype.create and is passed along directly.
