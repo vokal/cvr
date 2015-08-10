@@ -192,7 +192,6 @@ cvr.createGitHubStatus = function ( accessToken, message, done )
     github.statuses.create( message, done );
 };
 
-
 cvr.getCoverage = function ( content, type, done )
 {
     if( type === "lcov" )
