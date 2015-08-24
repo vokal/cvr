@@ -47,7 +47,7 @@ describe( "git", function ()
 {
     it( "should get a list of repos from GitHub", function ( done )
     {
-        this.timeout( 10000 );
+        this.timeout( 20000 );
         cvr.getGitHubRepos( accessToken, function ( err, repos )
         {
             assert( !err );
@@ -129,6 +129,30 @@ describe( "git", function ()
                 assert.equal( res.state, "success" );
                 done();
             } );
+        } );
+    } );
+
+    it( "should get a shield", function ( done )
+    {
+        cvr.getShield( 80, true, function ( err, res )
+        {
+            assert.equal( err, null );
+            assert.equal( res,
+            '<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20">\n'
+          + '    <g mask="url(#a)">\n'
+          + '        <path fill="#555" d="M0 0h90v20H0z"/>\n'
+          + '        <path fill="#4b1" d="M90 0h60v20H90z"/>\n'
+          + '    </g>\n'
+          + '    <g fill="#fff" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="11">\n'
+          + '        <text x="45" y="14">\n'
+          + '            line coverage\n'
+          + '        </text>\n'
+          + '        <text x="110" y="14">\n'
+          + '            80%\n'
+          + '        </text>\n'
+          + '    </g>\n'
+          + '</svg>\n' );
+            done();
         } );
     } );
 } );

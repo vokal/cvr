@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20">
+    <g mask="url(#a)">
+        <path fill="#555" d="M0 0h90v20H0z"/>
+        <path fill="{{color}}" d="M90 0h60v20H90z"/>
+    </g>
+    <g fill="#fff" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="11">
+        <text x="45" y="14">
+            line coverage
+        </text>
+        <text x="110" y="14">
+            {{cvr}}
+        </text>
+    </g>
+</svg>

@@ -1,0 +1,46 @@
+{
+    "disallowSpaceAfterPrefixUnaryOperators": true,
+    "disallowSpaceBeforePostfixUnaryOperators": true,
+    "disallowSpaceBeforeComma": true,
+    "disallowSpaceBeforeSemicolon": true,
+    "disallowSpacesInFunctionDeclaration": {
+        "beforeOpeningRoundBrace": true
+    },
+    "disallowSpacesInNamedFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
+    "disallowTrailingComma": true,
+    "disallowTrailingWhitespace": true,
+    "maximumLineLength": 120,
+    "requireCommaBeforeLineBreak": true,
+    "requireCurlyBraces": true,
+    "requireDotNotation": {
+        "allExcept": [ "snake_case", "keywords" ]
+    },
+    "requireNewlineBeforeBlockStatements": [
+        "if",
+        "else",
+        "try",
+        "catch",
+        "finally",
+        "do",
+        "while",
+        "for"
+    ],
+    "requirePaddingNewLinesAfterUseStrict": true,
+    "requireSpaceBeforeObjectValues": true,
+    "requireSpacesInAnonymousFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
+    "requireSpacesInConditionalExpression": true,
+    "requireSpacesInsideBrackets": {
+        "allExcept": [ "(", ")", "{", "}", "[", "]", "function" ]
+    },
+    "requireSpacesInsideParentheses": {
+        "all": true,
+        "except": [ "(", ")", "{", "}", "[", "]", "function" ]
+    },
+    "requireSemicolons": true,
+    "validateParameterSeparator": ", ",
+    "validateQuoteMarks": { "mark": "\"", "escape": true }
+}
