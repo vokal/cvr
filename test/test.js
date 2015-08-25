@@ -47,7 +47,7 @@ describe( "git", function ()
 {
     it( "should get a list of repos from GitHub", function ( done )
     {
-        this.timeout( 10000 );
+        this.timeout( 20000 );
         cvr.getGitHubRepos( accessToken, function ( err, repos )
         {
             assert( !err );
@@ -129,6 +129,15 @@ describe( "git", function ()
                 assert.equal( res.state, "success" );
                 done();
             } );
+        } );
+    } );
+
+    it( "should get a shield", function ( done )
+    {
+        cvr.getShield( 80, 80, function ( err, res )
+        {
+            assert.equal( err, null );
+            done();
         } );
     } );
 } );

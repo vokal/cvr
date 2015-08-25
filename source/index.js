@@ -13,6 +13,8 @@ var github = new githubApi( {
 } );
 
 var handlebars = require( "handlebars" );
+var shield = require( "svg-shield" );
+
 
 var cvr = {};
 
@@ -355,3 +357,18 @@ cvr.prependPath = function ( coverage, path, coverageType )
     return coverage.replace( /SF:/g, "SF:" + path );
 };
 
+cvr.getShield = function ( linePercent, minPassingLinePercent, callback )
+{
+    var valueBgColor = linePercent >= minPassingLinePercent ? "#4b1" : "#b21";
+    if( linePercent && linePercent.toFixed )
+    {
+        linePercent = linePercent.toFixed( 0 ) + "%";
+    }
+
+    shield.getShield( {
+        valueBgColor: valueBgColor,
+        value: linePercent || "new",
+        name: "line cvr",
+        nameWidth: 60
+    }, callback );
+};
