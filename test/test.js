@@ -134,24 +134,9 @@ describe( "git", function ()
 
     it( "should get a shield", function ( done )
     {
-        cvr.getShield( 80, true, function ( err, res )
+        cvr.getShield( 80, 80, function ( err, res )
         {
             assert.equal( err, null );
-            assert.equal( res,
-            '<svg xmlns="http://www.w3.org/2000/svg" width="130" height="20">\n'
-          + '    <g mask="url(#a)">\n'
-          + '        <path fill="#555" d="M0 0h90v20H0z"/>\n'
-          + '        <path fill="#4b1" d="M90 0h60v20H90z"/>\n'
-          + '    </g>\n'
-          + '    <g fill="#fff" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="11">\n'
-          + '        <text x="45" y="14">\n'
-          + '            line coverage\n'
-          + '        </text>\n'
-          + '        <text x="110" y="14">\n'
-          + '            80%\n'
-          + '        </text>\n'
-          + '    </g>\n'
-          + '</svg>\n' );
             done();
         } );
     } );

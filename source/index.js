@@ -13,8 +13,8 @@ var github = new githubApi( {
 } );
 
 var handlebars = require( "handlebars" );
+var shield = require( "svg-shield" );
 
-var shieldSvg = null;
 
 var cvr = {};
 
@@ -359,38 +359,16 @@ cvr.prependPath = function ( coverage, path, coverageType )
 
 cvr.getShield = function ( linePercent, minPassingLinePercent, callback )
 {
-    var onShield = function ()
+    var valueBgColor = linePercent >= minPassingLinePercent ? "#4b1" : "#b21";
+    if( linePercent && linePercent.toFixed )
     {
-        var passing = linePercent >= minPassingLinePercent;
-
-        if( linePercent.toFixed )
-        {
-            linePercent = linePercent.toFixed( 0 ) + "%";
-        }
-
-        var svg = shieldSvg.toString()
-            .replace( "{{color}}", passing ? "#4b1" : "#b21" )
-            .replace( "{{cvr}}", linePercent || "new" );
-
-        callback( null, svg );
-    };
-
-    if( !shieldSvg )
-    {
-        var svgPath = path.join( __dirname, "shield.svg" );
-        fs.readFile( svgPath, function ( err, svg )
-        {
-            if( err )
-            {
-                return callback( err );
-            }
-
-            shieldSvg = svg.toString();
-            onShield();
-        });
+        linePercent = linePercent.toFixed( 0 ) + "%";
     }
-    else
-    {
-        onShield();
-    }
+
+    shield.getShield( {
+        valueBgColor: valueBgColor,
+        value: linePercent || "new",
+        name: "line cvr",
+        nameWidth: 60
+    }, callback );
 };
