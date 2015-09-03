@@ -225,7 +225,7 @@ cvr.getLineCoveragePercent = function ( coverageArray )
         hit += c.lines.hit;
     } );
 
-    return hit / found * 100;
+    return Math.round( hit / found * 100 );
 };
 
 cvr.getFileCoverage = function ( coverage, filePath )
