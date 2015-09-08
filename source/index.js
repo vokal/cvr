@@ -225,7 +225,7 @@ cvr.getLineCoveragePercent = function ( coverageArray )
         hit += c.lines.hit;
     } );
 
-    return Math.round( hit / found * 100 );
+    return hit / found * 100;
 };
 
 cvr.getFileCoverage = function ( coverage, filePath )
@@ -362,13 +362,15 @@ cvr.getShield = function ( linePercent, minPassingLinePercent, callback )
     var valueBgColor = linePercent >= minPassingLinePercent ? "#4b1" : "#b21";
     if( linePercent && linePercent.toFixed )
     {
-        linePercent = linePercent.toFixed( 0 ) + "%";
+        linePercent = Math.floor( linePercent ).toFixed( 0 ) + "%";
     }
 
     shield.getShield( {
         valueBgColor: valueBgColor,
         value: linePercent || "new",
         name: "line cvr",
-        nameWidth: 60
+        nameWidth: 60,
+        fontSize: 12,
+        fontFamily: "Verdana, sans-serif"
     }, callback );
 };
