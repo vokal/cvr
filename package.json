@@ -24,6 +24,6 @@
     "mocha": "^2.2.4",
     "nodegit": "^0.3.3",
     "rimraf": "^2.3.3",
-    "svg-shield": "^1.1.0"
+    "svg-shield": "^1.0.0"
   }
 }
