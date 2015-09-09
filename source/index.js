@@ -362,7 +362,7 @@ cvr.getShield = function ( linePercent, minPassingLinePercent, callback )
     var valueBgColor = linePercent >= minPassingLinePercent ? "#4b1" : "#b21";
     if( linePercent && linePercent.toFixed )
     {
-        linePercent = linePercent.toFixed( 0 ) + "%";
+        linePercent = Math.floor( linePercent ).toFixed( 0 ) + "%";
     }
 
     shield.getShield( {
