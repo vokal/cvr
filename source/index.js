@@ -369,8 +369,6 @@ cvr.getShield = function ( linePercent, minPassingLinePercent, callback )
         valueBgColor: valueBgColor,
         value: linePercent || "new",
         name: "line cvr",
-        nameWidth: 60,
-        fontSize: 12,
-        fontFamily: "Verdana, sans-serif"
+        nameWidth: 60
     }, callback );
 };
