@@ -85,6 +85,24 @@ describe( "git", function ()
                 '<class name="app.js" filename="source/scripts/project/app.js" line-rate="0.9459000000000001">',
                 "project/", "cobertura" ),
                 '<class name="app.js" filename="project/source/scripts/project/app.js" line-rate="0.9459000000000001">' );
+
+        assert.equal(
+            cvr.prependPath(
+                '<package name="source/scripts/project"><class name="source/scripts/project/app">',
+                "project/", "jacoco" ),
+                '<package name="project/source/scripts/project"><class name="project/source/scripts/project/app">' );
+
+        assert.equal(
+            cvr.prependPath(
+                "mode: count\nsource/scripts/project/app.js:44.31,47.2 2 0\nsource/scripts/project/app.js:49.71,54.16 4 7",
+                "project/", "gocover" ),
+                "mode: count\nproject/source/scripts/project/app.js:44.31,47.2 2 0\nproject/source/scripts/project/app.js:49.71,54.16 4 7" );
+
+        assert.equal(
+            cvr.prependPath(
+                "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
+                "project/", "lcov" ),
+                "TN:\nSF:project/source/scripts/project/app.js\nFN:5,(anonymous_1)" );
     } );
 
     it( "should remove paths", function ()

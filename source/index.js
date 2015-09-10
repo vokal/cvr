@@ -362,7 +362,11 @@ cvr.prependPath = function ( coverage, path, coverageType )
     {
         return coverage.split( "mode:" ).map( function ( mode )
         {
-            return "mode:" + mode.replace( /(.*):/g, path + "$1" );
+            if( mode )
+            {
+                return "mode:" + mode.replace( /(.*):/g, path + "$1:" );
+            }
+            return "";
         } ).join( "" );
     }
 
