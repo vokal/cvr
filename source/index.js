@@ -7,6 +7,7 @@ var async = require( "async" );
 var lcov = require( "lcov-parse" );
 var cobertura = require( "cobertura-parse" );
 var jacoco = require( "jacoco-parse" );
+var gocover = require( "golang-cover-parse" );
 var githubApi = require( "github" );
 var github = new githubApi( {
     version: "3.0.0"
@@ -208,6 +209,10 @@ cvr.getCoverage = function ( content, type, done )
     {
         jacoco.parseContent( content, done );
     }
+    else if( type === "gocover" )
+    {
+        gocover.parseContent( content, done );
+    }
     else
     {
         done( new Error( "Coverage Type Unavailable: " + type ) );
@@ -351,6 +356,14 @@ cvr.prependPath = function ( coverage, path, coverageType )
     if( coverageType === "cobertura" )
     {
         return coverage.replace( /filename="/g, "filename=\"" + path );
+    }
+
+    if( coverageType === "gocover" )
+    {
+        return coverage.split( "mode:" ).map( function ( mode )
+        {
+            return "mode:" + mode.replace( /(.*):/g, path + "$1" );
+        } ).join( "" );
     }
 
     // default to lcov

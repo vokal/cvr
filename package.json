@@ -18,6 +18,7 @@
     "atob": "^1.1.2",
     "cobertura-parse": "1.x",
     "github": "^0.2.4",
+    "golang-cover-parse": "^1.0.0",
     "handlebars": "^3.0.3",
     "jacoco-parse": "^1.0.0",
     "lcov-parse": "0.0.9",

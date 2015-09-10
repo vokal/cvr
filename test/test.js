@@ -75,6 +75,9 @@ describe( "git", function ()
     it( "should create a coverage report for a jacoco file",
         getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js" ) );
 
+    it( "should create a coverage report for a Go Cover file",
+        getTestReporter( "./test/assets/gocover.out", "gocover", "source/scripts/project/app.js" ) );
+
     it( "should prepend paths", function ()
     {
         assert.equal(
