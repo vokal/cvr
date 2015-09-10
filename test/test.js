@@ -13,7 +13,7 @@ var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HAS
 var webhookUrl = process.env.WEBHOOK_URL || require( "./local.json" ).WEBHOOK_URL;
 
 
-var getTestReporter = function ( sourceFile, format, coveredFile )
+var getTestReporter = function ( sourceFile, format, coveredFile, linePercent )
 {
     return function ( done )
     {
@@ -28,6 +28,8 @@ var getTestReporter = function ( sourceFile, format, coveredFile )
             {
                 cvr.getCoverage( content, format, function ( err, cov )
                 {
+                    assert.equal( Math.floor( cvr.getLineCoveragePercent( cov ) ), linePercent );
+
                     var coverage = cvr.getFileCoverage( cov, coveredFile );
                     cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
                     {
@@ -67,13 +69,16 @@ describe( "git", function ()
     } );
 
     it( "should create a coverage report for a LCOV file",
-        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js", 42 ) );
 
     it( "should create a coverage report for a Cobertura file",
-        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js", 94 ) );
 
     it( "should create a coverage report for a jacoco file",
-        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js", 23 ) );
+
+    it( "should create a coverage report for a Go Cover file",
+        getTestReporter( "./test/assets/gocover.out", "gocover", "source/scripts/project/app.js", 46 ) );
 
     it( "should prepend paths", function ()
     {
@@ -82,6 +87,24 @@ describe( "git", function ()
                 '<class name="app.js" filename="source/scripts/project/app.js" line-rate="0.9459000000000001">',
                 "project/", "cobertura" ),
                 '<class name="app.js" filename="project/source/scripts/project/app.js" line-rate="0.9459000000000001">' );
+
+        assert.equal(
+            cvr.prependPath(
+                '<package name="source/scripts/project"><class name="source/scripts/project/app">',
+                "project/", "jacoco" ),
+                '<package name="project/source/scripts/project"><class name="project/source/scripts/project/app">' );
+
+        assert.equal(
+            cvr.prependPath(
+                "mode: count\nsource/scripts/project/app.js:44.31,47.2 2 0\nsource/scripts/project/app.js:49.71,54.16 4 7",
+                "project/", "gocover" ),
+                "mode: count\nproject/source/scripts/project/app.js:44.31,47.2 2 0\nproject/source/scripts/project/app.js:49.71,54.16 4 7" );
+
+        assert.equal(
+            cvr.prependPath(
+                "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
+                "project/", "lcov" ),
+                "TN:\nSF:project/source/scripts/project/app.js\nFN:5,(anonymous_1)" );
     } );
 
     it( "should remove paths", function ()
