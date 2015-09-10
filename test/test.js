@@ -13,7 +13,7 @@ var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HAS
 var webhookUrl = process.env.WEBHOOK_URL || require( "./local.json" ).WEBHOOK_URL;
 
 
-var getTestReporter = function ( sourceFile, format, coveredFile )
+var getTestReporter = function ( sourceFile, format, coveredFile, linePercent )
 {
     return function ( done )
     {
@@ -28,6 +28,8 @@ var getTestReporter = function ( sourceFile, format, coveredFile )
             {
                 cvr.getCoverage( content, format, function ( err, cov )
                 {
+                    assert.equal( Math.floor( cvr.getLineCoveragePercent( cov ) ), linePercent );
+
                     var coverage = cvr.getFileCoverage( cov, coveredFile );
                     cvr.formatCoverage( coverage, text, coveredFile, function ( err, result )
                     {
@@ -67,16 +69,16 @@ describe( "git", function ()
     } );
 
     it( "should create a coverage report for a LCOV file",
-        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js", 42 ) );
 
     it( "should create a coverage report for a Cobertura file",
-        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js", 94 ) );
 
     it( "should create a coverage report for a jacoco file",
-        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js", 23 ) );
 
     it( "should create a coverage report for a Go Cover file",
-        getTestReporter( "./test/assets/gocover.out", "gocover", "source/scripts/project/app.js" ) );
+        getTestReporter( "./test/assets/gocover.out", "gocover", "source/scripts/project/app.js", 46 ) );
 
     it( "should prepend paths", function ()
     {
