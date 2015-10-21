@@ -1,7 +1,5 @@
 image: docker.vokal.io/web-testing
 env:
-    - BOWER_LOGIN=$$bowerLogin
-    - BOWER_OAUTH=$$bowerOauth
     - GITHUB_USER=$$bowerLogin
     - GITHUB_TOKEN=$$bowerOauth
     - GITHUB_REPO=$$gitHubRepo
