@@ -166,3 +166,8 @@ Or to run with coverage statistics `npm run testcover`
 ## Contributing
 
 A JSCS file is included. Please check any changes against the code standards defined in that file. All changes should have tests.
+
+
+## License
+
+MIT
