@@ -1,5 +1,9 @@
 # CVR
 
+[![line cvr](https://cvr.vokal.io/vokal/cvr/shield.svg)](https://cvr.vokal.io/repo/vokal/cvr)
+
+**The badge above is generated in part by this repo!**
+
 ## Tools for working with code coverage reports.
 
 CVR has support for processing coverage in Cobertura, LCOV, Jacoco, and Go Cover. Coverage is translated first to a standard JavaScript format and then can be queried for coverage metrics including line, function, and branch coverage. There are also a set of tools for interacting with the GitHub API that makes it easier to get files matching coverage reports.
