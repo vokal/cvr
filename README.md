@@ -6,7 +6,7 @@
 
 ## Tools for working with code coverage reports.
 
-CVR has support for processing coverage in Cobertura, LCOV, Jacoco, and Go Cover. Coverage is translated first to a standard JavaScript format and then can be queried for coverage metrics including line, function, and branch coverage. There are also a set of tools for interacting with the GitHub API that makes it easier to get files matching coverage reports.
+CVR has support for processing coverage in Cobertura, LCOV, Jacoco, and Go Cover. Coverage is translated first to a standard JavaScript format and then can be queried for coverage metrics including line, function, and branch coverage. There are also a set of tools for interacting with the GitHub API that make it easier to get files matching coverage reports.
 
 
 ## Installation
@@ -34,33 +34,33 @@ Parsers are used for each coverage format to convert the diverse formats into a 
 
 ```json
 {
-    "title": "Test #1",
-    "file": "anim-base/anim-base-coverage.js",
-    "functions": {
-      "hit": 23,
-      "found": 29,
-      "details": [ {
-          "name": "(anonymous 1)",
-          "line": 7,
-          "hit": 6
-        } ]
-    },
-    "lines": {
-      "found": 181,
-      "hit": 143,
-      "details": [ {
-          "line": 7,
-          "hit": 6
-        } ]
-    },
-    "branches": {
-      "found": 123,
-      "hit": 456,
-      "details": [ {
-          "line": 7,
-          "hit": 6
-        } ]
-    }
+  "title": "Test #1",
+  "file": "anim-base/anim-base-coverage.js",
+  "functions": {
+    "hit": 23,
+    "found": 29,
+    "details": [ {
+      "name": "(anonymous 1)",
+      "line": 7,
+      "hit": 6
+    } ]
+  },
+  "lines": {
+    "found": 181,
+    "hit": 143,
+    "details": [ {
+      "line": 7,
+      "hit": 6
+    } ]
+  },
+  "branches": {
+    "found": 123,
+    "hit": 456,
+    "details": [ {
+      "line": 7,
+      "hit": 6
+    } ]
+  }
 }
 ```
 
