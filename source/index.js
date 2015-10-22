@@ -326,6 +326,11 @@ cvr.formatCoverage = function ( coverage, source, filePath, done )
         { encoding: "utf8" },
         function ( err, content )
     {
+        if( err )
+        {
+            return done( err );
+        }
+
         var template = handlebars.compile( content );
 
         done( null, template( {
