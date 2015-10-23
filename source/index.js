@@ -76,9 +76,18 @@ cvr.getGitHubRepos = function ( accessToken, done )
         async.series( fetch, function ( err, results )
         {
             var flat = [];
-            results.forEach( function ( r )
+            var flatIds = [];
+
+            results.forEach( function ( repos )
             {
-                flat = flat.concat( r );
+                repos.forEach( function ( repo )
+                {
+                    if( flatIds.indexOf( repo.id ) === -1 )
+                    {
+                        flat.push( repo );
+                        flatIds.push( repo.id );
+                    }
+                } );
             } );
             done( null, flat );
         } );
@@ -126,10 +135,12 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
             }
             else
             {
-                done( null, results.sort( function ( a, b )
+                results = results.sort( function ( a, b )
                 {
                     return a.full_name < b.full_name ? -1 : a.full_name > b.full_name ? 1 : 0;
-                } ) );
+                } );
+
+                done( null, results );
             }
         } );
     };
