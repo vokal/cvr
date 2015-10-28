@@ -321,7 +321,7 @@ cvr.getFileType = function ( filePath )
         js: "javascript",
         less: "less",
         md: "markdown",
-        python: "python",
+        py: "python",
         sql: "sql"
     };
 
