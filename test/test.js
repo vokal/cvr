@@ -169,21 +169,22 @@ describe( "File type checking", function()
 {
     it( "should return correct file type", function( done )
     {
-        var fileNames = {
-            bash: "script.sh",
-            css: "my-styles.css",
-            go: "main.go",
-            javascript: "index.js",
-            less: "my-style.less",
-            markdown: "README.md",
-            python: "urls.py",
-            sql: "V34__Create_sp_insert_data.sql",
-            clike: "Some_other_file.xcode"
+        var fileTypes = {
+            "my-style.less": "less",
+            "my-styles.css": "css",
+            "main.go": "go",
+            "Some_other_file.xcode": "clike",
+            "urls.py": "python",
+            "V34__Create_sp_insert_data.sql": "sql",
+            "script.sh": "bash",
+            "other-script.bash": "bash",
+            "README.md": "markdown", 
+            "index.js": "javascript"
         };
 
-        for ( var type in fileNames )
+        for ( var name in fileTypes )
         {
-            assert.equal( type, cvr.getFileType( fileNames[ type ] ) );
+            assert.equal( fileTypes[ name ], cvr.getFileType( name ) );
         };
         done();
     } );
