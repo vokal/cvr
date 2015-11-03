@@ -171,6 +171,7 @@ describe( "File type checking", function()
     {
         var fileNames = {
             bash: "script.sh",
+            bash: "other_script.bash",
             css: "my-styles.css",
             go: "main.go",
             javascript: "index.js",
