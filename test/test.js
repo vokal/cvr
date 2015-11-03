@@ -164,3 +164,28 @@ describe( "git", function ()
         } );
     } );
 } );
+
+describe( "File type checking", function()
+{
+    it( "should return correct file type", function( done )
+    {
+        var fileTypes = {
+            "my-style.less": "less",
+            "my-styles.css": "css",
+            "main.go": "go",
+            "Some_other_file.xcode": "clike",
+            "urls.py": "python",
+            "V34__Create_sp_insert_data.sql": "sql",
+            "script.sh": "bash",
+            "other-script.bash": "bash",
+            "README.md": "markdown", 
+            "index.js": "javascript"
+        };
+
+        for ( var name in fileTypes )
+        {
+            assert.equal( fileTypes[ name ], cvr.getFileType( name ) );
+        };
+        done();
+    } );
+} );

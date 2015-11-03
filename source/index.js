@@ -315,6 +315,7 @@ cvr.linesMissing = function ( coverage )
 cvr.getFileType = function ( filePath )
 {
     var types = {
+        sh: "bash",
         bash: "bash",
         css: "css",
         go: "go",
