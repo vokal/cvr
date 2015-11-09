@@ -155,6 +155,10 @@ This is a convenience method that collects repos from the user's org and own rep
 - `message` follows http://mikedeboer.github.io/node-github/#statuses.prototype.create and is passed along directly.
 - `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
 
+### `sortCoverage( coverageArray )`
+
+- `coverageArray` | _Array of Common Coverage Objects_ | array of file coverage
+
 
 ## Tests
 
