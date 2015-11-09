@@ -154,7 +154,10 @@ describe( "git", function ()
             } );
         } );
     } );
+} );
 
+describe( "Shields", function ()
+{
     it( "should get a shield", function ( done )
     {
         cvr.getShield( 80, 80, function ( err, res )
@@ -165,9 +168,27 @@ describe( "git", function ()
     } );
 } );
 
-describe( "File type checking", function()
+describe( "Utility", function ()
 {
-    it( "should return correct file type", function( done )
+    it( "should sort coverage by file path", function ( done )
+    {
+        var coverageArray = [
+            { file: "app/sub/test.html" },
+            { file: "app/sub/index.html" },
+            { file: "app/index.html" } ];
+
+        var result = cvr.sortCoverage( coverageArray );
+
+        assert.equal( coverageArray[ 0 ].file, "app/index.html" );
+        assert.equal( coverageArray[ 1 ].file, "app/sub/index.html" );
+        assert.equal( coverageArray[ 2 ].file, "app/sub/test.html" );
+        done();
+    } );
+} );
+
+describe( "File type checking", function ()
+{
+    it( "should return correct file type", function ( done )
     {
         var fileTypes = {
             "my-style.less": "less",
@@ -178,7 +199,7 @@ describe( "File type checking", function()
             "V34__Create_sp_insert_data.sql": "sql",
             "script.sh": "bash",
             "other-script.bash": "bash",
-            "README.md": "markdown", 
+            "README.md": "markdown",
             "index.js": "javascript"
         };
 
