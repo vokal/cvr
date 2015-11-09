@@ -230,6 +230,27 @@ cvr.getCoverage = function ( content, type, done )
     }
 };
 
+cvr.sortCoverage = function ( coverageArray )
+{
+    return coverageArray.sort( function ( a, b )
+    {
+        if( a === b )
+        {
+            return 0;
+        }
+
+        var dirA = path.dirname( a.file );
+        var dirB = path.dirname( b.file );
+
+        if( dirA !== dirB )
+        {
+            return dirA > dirB ? 1 : -1;
+        }
+
+        return path.basename( a.file ) > path.basename( b.file ) ? 1 : -1;
+    } );
+};
+
 cvr.getLineCoveragePercent = function ( coverageArray )
 {
     var found = 0;
