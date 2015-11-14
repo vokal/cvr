@@ -184,6 +184,21 @@ describe( "Utility", function ()
         assert.equal( coverageArray[ 2 ].file, "app/sub/test.html" );
         done();
     } );
+
+    it( "should calculate correct coverage percent", function ( done )
+    {
+        var coverageArray = [];
+
+        assert.equal( cvr.getLineCoveragePercent( coverageArray ), 100 );
+
+        coverageArray = [ { lines: { found: 0, hit: 0 } } ];
+        assert.equal( cvr.getLineCoveragePercent( coverageArray ), 100 );
+
+        coverageArray = [ { lines: { found: 4, hit: 1 } } ];
+        assert.equal( cvr.getLineCoveragePercent( coverageArray ), 25 );
+
+        done();
+    } );
 } );
 
 describe( "File type checking", function ()

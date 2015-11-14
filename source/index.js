@@ -262,6 +262,11 @@ cvr.getLineCoveragePercent = function ( coverageArray )
         hit += c.lines.hit;
     } );
 
+    if( found === 0 )
+    {
+        return 100;
+    }
+
     return hit / found * 100;
 };
 
