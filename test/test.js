@@ -199,6 +199,18 @@ describe( "Utility", function ()
 
         done();
     } );
+
+    it( "should get a line", function ( done )
+    {
+        var coverageArray = [];
+
+        assert.deepEqual( cvr.getLine( coverageArray, 1 ), { active: false, hit: null } );
+
+        coverageArray = coverageArray = [ { line: 1, found: 4, hit: 5 } ];
+        assert.deepEqual( cvr.getLine( coverageArray, 1 ), { active: true, hit: 5 } );
+
+        done();
+    } );
 } );
 
 describe( "File type checking", function ()
