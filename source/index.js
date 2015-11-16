@@ -282,7 +282,7 @@ cvr.getLine = function ( lineCoverage, line )
 {
     var lineExecs = lineCoverage.filter( function ( c )
     {
-        return c.line === line - 1;
+        return c.line === line;
     } );
 
     return {
