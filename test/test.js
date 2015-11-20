@@ -116,12 +116,22 @@ describe( "git", function ()
                 "TN:\nSF:project/app.js\nFN:5,(anonymous_1)" );
     } );
 
-    it( "should register a webhook", function ( done )
+    it( "should create a webhook", function ( done )
     {
         cvr.createGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.config.url, webhookUrl );
+            done();
+        } );
+    } );
+
+    it( "should delete a webhook", function ( done )
+    {
+        cvr.deleteGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
+        {
+            assert.equal( err, null );
+            assert.equal( !!res, true );
             done();
         } );
     } );

@@ -148,7 +148,7 @@ cvr.getGitHubOrgRepos = function ( accessToken, org, done )
     getPage( 1 );
 };
 
-cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
+cvr.getHookByUrl = function ( accessToken, owner, repoName, hookUrl, done )
 {
     github.authenticate( {
         type: "oauth",
@@ -172,6 +172,36 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
             return done( null, existingHook );
         }
 
+        return done( null, null );
+    };
+
+    github.repos.getHooks( {
+        user: owner,
+        repo: repoName,
+        page: 1,
+        per_page: 100
+    }, onHooks );
+};
+
+cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    var onHook = function ( err, hook )
+    {
+        if( err )
+        {
+            return done ( err );
+        }
+
+        if( hook )
+        {
+            return done( null, hook );
+        }
+
         github.repos.createHook( {
             user: owner,
             repo: repoName,
@@ -187,13 +217,36 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
         }, done );
     };
 
-    github.repos.getHooks( {
-        user: owner,
-        repo: repoName,
-        page: 1,
-        per_page: 100
-    }, onHooks );
+    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, onHook );
+};
 
+cvr.deleteGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
+{
+    github.authenticate( {
+        type: "oauth",
+        token: accessToken
+    } );
+
+    var onHook = function ( err, existingHook )
+    {
+        if( err )
+        {
+            return done ( err );
+        }
+
+        if( !existingHook )
+        {
+            return done( new Error( "hook does not exist" ) );
+        }
+
+        github.repos.deleteHook( {
+            user: owner,
+            repo: repoName,
+            id: existingHook.id
+        }, done );
+    };
+
+    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, onHook );
 };
 
 cvr.createGitHubStatus = function ( accessToken, message, done )
