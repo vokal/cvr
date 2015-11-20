@@ -217,7 +217,7 @@ cvr.createGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
         }, done );
     };
 
-    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, done );
+    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, onHook );
 };
 
 cvr.deleteGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
@@ -227,7 +227,7 @@ cvr.deleteGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
         token: accessToken
     } );
 
-    var onHook = function ( err, res )
+    var onHook = function ( err, existingHook )
     {
         if( err )
         {
@@ -246,7 +246,7 @@ cvr.deleteGitHubHook = function ( accessToken, owner, repoName, hookUrl, done )
         }, done );
     };
 
-    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, done );
+    cvr.getHookByUrl( accessToken, owner, repoName, hookUrl, onHook );
 };
 
 cvr.createGitHubStatus = function ( accessToken, message, done )

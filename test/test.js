@@ -131,6 +131,7 @@ describe( "git", function ()
         cvr.deleteGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
+            assert.equal( !!res, true );
             done();
         } );
     } );
