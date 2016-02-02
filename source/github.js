@@ -177,7 +177,7 @@ api.getHookByUrl = function ( accessToken, owner, repoName, hookUrl, done )
     {
         if( err )
         {
-            return done ( err );
+            return done( err );
         }
 
         var existingHook = res.filter( function ( r )
@@ -185,12 +185,7 @@ api.getHookByUrl = function ( accessToken, owner, repoName, hookUrl, done )
             return r.config.url === hookUrl;
         } )[ 0 ];
 
-        if( existingHook )
-        {
-            return done( null, existingHook );
-        }
-
-        return done( null, null );
+        return done( null, existingHook || null );
     };
 
     github.repos.getHooks( {
@@ -209,7 +204,7 @@ api.createHook = function ( accessToken, owner, repoName, hookUrl, done )
     {
         if( err )
         {
-            return done ( err );
+            return done( err );
         }
 
         if( hook )
@@ -243,7 +238,7 @@ api.deleteHook = function ( accessToken, owner, repoName, hookUrl, done )
     {
         if( err )
         {
-            return done ( err );
+            return done( err );
         }
 
         if( !existingHook )
