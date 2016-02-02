@@ -7,7 +7,7 @@
     <packages>
         <package name="build.scripts.project" line-rate="0.9467" branch-rate="0.6923">
             <classes>
-                <class name="app.js" filename="source/scripts/project/app.js" line-rate="0.9459000000000001"
+                <class name="app.js" filename="source/index.js" line-rate="0.9459000000000001"
                 branch-rate="0.6923">
                     <methods>
                         <method name="(anonymous_1)" hits="165" signature="()V">
