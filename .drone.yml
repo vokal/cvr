@@ -10,8 +10,8 @@ env:
     - WEBHOOK_URL=$$webhookUrl
 script:
     - git config --global url."https://github".insteadOf git://github
-    - npm install -g istanbul
-    - npm install
+    - npm install -g istanbul --silent
+    - npm install --silent
     - chmod +x run-build.sh
     - ./run-build.sh
 notify:
