@@ -2,8 +2,8 @@
 <!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.0//EN" "report.dtd">
 <report name="debug">
   <sessioninfo id="unknownhost-3ec3adb3" start="1435852061594" dump="1435852061672"/>
-  <package name="source/scripts/project">
-    <class name="source/scripts/project/app">
+  <package name="source">
+    <class name="source/index">
       <method name="&lt;init&gt;" desc="()V" line="8">
         <counter type="INSTRUCTION" missed="3" covered="0"/>
         <counter type="LINE" missed="1" covered="0"/>
@@ -43,7 +43,7 @@
       <counter type="METHOD" missed="4" covered="1"/>
       <counter type="CLASS" missed="0" covered="1"/>
     </class>
-    <sourcefile name="app.js">
+    <sourcefile name="index.js">
       <line nr="8" mi="3" ci="0" mb="0" cb="0"/>
       <line nr="11" mi="0" ci="2" mb="0" cb="0"/>
       <line nr="12" mi="0" ci="1" mb="0" cb="0"/>

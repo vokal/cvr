@@ -4,22 +4,24 @@ var assert = require( "assert" );
 var cvr = require( "../source" );
 var fs = require( "fs" );
 var path = require( "path" );
+require( "dotenv" ).load();
 
-var accessToken = process.env.GITHUB_TOKEN || require( "./local.json" ).GITHUB_TOKEN;
-var gitHubUser = process.env.GITHUB_USER || require( "./local.json" ).GITHUB_USER;
-var gitHubRepoOwner = process.env.GITHUB_REPO_OWNER || require( "./local.json" ).GITHUB_REPO_OWNER;
-var gitHubRepo = process.env.GITHUB_REPO || require( "./local.json" ).GITHUB_REPO;
-var commitHash = process.env.COMMIT_HASH || require( "./local.json" ).COMMIT_HASH;
-var webhookUrl = process.env.WEBHOOK_URL || require( "./local.json" ).WEBHOOK_URL;
+var accessToken = process.env.GITHUB_TOKEN;
+var webhookUrl = process.env.WEBHOOK_URL;
+var gitHubUser = "jrit";
+var gitHubRepoOwner = "vokal";
+var gitHubRepo = "cvr";
+var commitHash = "ef54eb807093e8a1f45f26a624267503ea01932d";
+var coveredFile = "source/index.js";
 
 
 var getTestReporter = function ( sourceFile, format, coveredFile, linePercent )
 {
     return function ( done )
     {
-        cvr.getGitHubFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
+        cvr.gitHub.getFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
         {
-            assert.equal( !!err, false );
+            assert.equal( !!err, false, "err should be null: " + err );
             assert.equal( !!String( blob ), true );
 
             var text = String( blob );
@@ -50,7 +52,7 @@ describe( "git", function ()
     it( "should get a list of repos from GitHub", function ( done )
     {
         this.timeout( 20000 );
-        cvr.getGitHubRepos( accessToken, function ( err, repos )
+        cvr.gitHub.getRepos( accessToken, function ( err, repos )
         {
             assert( !err );
             assert( repos.length > 0 );
@@ -60,7 +62,7 @@ describe( "git", function ()
 
     it( "should get a file from github", function ( done )
     {
-        cvr.getGitHubFile( accessToken, gitHubRepoOwner, gitHubRepo, commitHash, "README.md", function ( err, res )
+        cvr.gitHub.getFile( accessToken, gitHubRepoOwner, gitHubRepo, commitHash, "README.md", function ( err, res )
         {
             assert( !err );
             assert( !!res );
@@ -69,24 +71,24 @@ describe( "git", function ()
     } );
 
     it( "should create a coverage report for a LCOV file",
-        getTestReporter( "./test/assets/lcov.info", "lcov", "source/scripts/project/app.js", 42 ) );
+        getTestReporter( "./test/assets/lcov.info", "lcov", coveredFile, 42 ) );
 
     it( "should create a coverage report for a Cobertura file",
-        getTestReporter( "./test/assets/cobertura.xml", "cobertura", "source/scripts/project/app.js", 94 ) );
+        getTestReporter( "./test/assets/cobertura.xml", "cobertura", coveredFile, 94 ) );
 
     it( "should create a coverage report for a jacoco file",
-        getTestReporter( "./test/assets/jacoco.xml", "jacoco", "source/scripts/project/app.js", 23 ) );
+        getTestReporter( "./test/assets/jacoco.xml", "jacoco", coveredFile, 23 ) );
 
     it( "should create a coverage report for a Go Cover file",
-        getTestReporter( "./test/assets/gocover.out", "gocover", "source/scripts/project/app.js", 46 ) );
+        getTestReporter( "./test/assets/gocover.out", "gocover", coveredFile, 46 ) );
 
     it( "should prepend paths", function ()
     {
         assert.equal(
             cvr.prependPath(
-                '<class name="app.js" filename="source/scripts/project/app.js" line-rate="0.9459000000000001">',
+                '<class name="index.js" filename="source/index.js" line-rate="0.9459000000000001">',
                 "project/", "cobertura" ),
-                '<class name="app.js" filename="project/source/scripts/project/app.js" line-rate="0.9459000000000001">' );
+                '<class name="index.js" filename="project/source/index.js" line-rate="0.9459000000000001">' );
 
         assert.equal(
             cvr.prependPath(
@@ -96,29 +98,29 @@ describe( "git", function ()
 
         assert.equal(
             cvr.prependPath(
-                "mode: count\nsource/scripts/project/app.js:44.31,47.2 2 0\nsource/scripts/project/app.js:49.71,54.16 4 7",
+                "mode: count\nsource/index.js:44.31,47.2 2 0\nsource/index.js:49.71,54.16 4 7",
                 "project/", "gocover" ),
-                "mode: count\nproject/source/scripts/project/app.js:44.31,47.2 2 0\nproject/source/scripts/project/app.js:49.71,54.16 4 7" );
+                "mode: count\nproject/source/index.js:44.31,47.2 2 0\nproject/source/index.js:49.71,54.16 4 7" );
 
         assert.equal(
             cvr.prependPath(
-                "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
+                "TN:\nSF:source/index.js\nFN:5,(anonymous_1)",
                 "project/", "lcov" ),
-                "TN:\nSF:project/source/scripts/project/app.js\nFN:5,(anonymous_1)" );
+                "TN:\nSF:project/source/index.js\nFN:5,(anonymous_1)" );
     } );
 
     it( "should remove paths", function ()
     {
         assert.equal(
             cvr.removePath(
-                "TN:\nSF:source/scripts/project/app.js\nFN:5,(anonymous_1)",
+                "TN:\nSF:source/index.js\nFN:5,(anonymous_1)",
                 "source/scripts/", "lcov" ),
-                "TN:\nSF:project/app.js\nFN:5,(anonymous_1)" );
+                "TN:\nSF:source/index.js\nFN:5,(anonymous_1)" );
     } );
 
     it( "should create a webhook", function ( done )
     {
-        cvr.createGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
+        cvr.gitHub.createHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.config.url, webhookUrl );
@@ -128,7 +130,7 @@ describe( "git", function ()
 
     it( "should delete a webhook", function ( done )
     {
-        cvr.deleteGitHubHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
+        cvr.gitHub.deleteHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( !!res, true );
@@ -148,7 +150,7 @@ describe( "git", function ()
             target_url: "http://vokal.io"
         };
 
-        cvr.createGitHubStatus( accessToken, statusMessage, function ( err, res )
+        cvr.gitHub.createStatus( accessToken, statusMessage, function ( err, res )
         {
             assert.equal( err, null );
             assert.equal( res.state, "pending" );
@@ -156,7 +158,7 @@ describe( "git", function ()
             statusMessage.state = "success";
             statusMessage.description = "code coverage meets minimum";
 
-            cvr.createGitHubStatus( accessToken, statusMessage, function ( err, res )
+            cvr.gitHub.createStatus( accessToken, statusMessage, function ( err, res )
             {
                 assert.equal( err, null );
                 assert.equal( res.state, "success" );
