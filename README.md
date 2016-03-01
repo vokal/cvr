@@ -122,7 +122,13 @@ Returns a complete template with code coloring and syntax highlighting, as compa
 - `filePath` | _String_ | the file path
 - `callback` | _Function_, args err: Error, String: html | `html` is created based on the `source/templates/basic.html` file
 
-### `getGitHubFile( accessToken, owner, repoName, commitHash, filePath, callback )`
+### `sortCoverage( coverageArray )`
+
+- `coverageArray` | _Array of Common Coverage Objects_ | array of file coverage
+
+## GitHub Methods
+
+### `gitHub.getFile( accessToken, owner, repoName, commitHash, filePath, callback )`
 
 - `accessToken` | _String_ | GitHub access token
 - `owner` | _String_ | GitHub file owner
@@ -131,33 +137,58 @@ Returns a complete template with code coloring and syntax highlighting, as compa
 - `filePath` | _String_ | GitHub file path (this must match the path on GitHub, not the local file path)
 - `callback` | _Function_, args err: Error, String: contents | `contents` is the file contents
 
-### `getGitHubRepos( accessToken, callback )`
+### `gitHub.getRepos( accessToken, callback )`
 
 This is a convenience method that collects repos from the user's org and own repos
 
 - `accessToken` | _String_ | GitHub access token
 - `callback` | _Function_, args err: Error, Array: repos | `repos` is a list of all the repos, the order is not guaranteed to be consistent
 
-### `getGitHubOwnerRepos( accessToken, callback )`
+### `gitHub.getOwnerRepos( accessToken, callback )`
 
 - `accessToken` | _String_ | GitHub access token
 - `callback` | _Function_, args err: Error, Array: repos | `repos` is a list of all the owner's repos
 
-### `getGitHubOrgRepos( accessToken, org, callback )`
+### `gitHub.getOrgRepos( accessToken, org, callback )`
 
 - `accessToken` | _String_ | GitHub access token
 - `org` | _String_ | GitHub organization name
 - `callback` | _Function_, args err: Error, Array: repos | `repos` is a list of all the org's repos
 
-### `createGitHubStatus( accessToken, message, callback )`
+### `gitHub.createStatus( accessToken, message, callback )`
 
 - `accessToken` | _String_ | GitHub access token
 - `message` follows http://mikedeboer.github.io/node-github/#statuses.prototype.create and is passed along directly.
 - `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
 
-### `sortCoverage( coverageArray )`
+### `gitHub.getOrgs( accessToken, callback )`
 
-- `coverageArray` | _Array of Common Coverage Objects_ | array of file coverage
+- `accessToken` | _String_ | GitHub access token
+- `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
+
+### `gitHub.getHookByUrl( accessToken, owner, repoName, hookUrl, callback )`
+
+- `accessToken` | _String_ | GitHub access token
+- `owner` | _String_ | GitHub hook owner
+- `repoName` | _String_ | GitHub repo name
+- `hookUrl` | _String_ | URL of hook
+- `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
+
+### `gitHub.createHook( accessToken, owner, repoName, hookUrl, callback )`
+
+- `accessToken` | _String_ | GitHub access token
+- `owner` | _String_ | GitHub hook owner
+- `repoName` | _String_ | GitHub repo name
+- `hookUrl` | _String_ | URL of hook
+- `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
+
+### `gitHub.deleteHook( accessToken, owner, repoName, hookUrl, callback )`
+
+- `accessToken` | _String_ | GitHub access token
+- `owner` | _String_ | GitHub hook owner
+- `repoName` | _String_ | GitHub repo name
+- `hookUrl` | _String_ | URL of hook
+- `callback` | _Function_, args err: Error | callback is invoked directly by the GitHub module
 
 
 ## Tests

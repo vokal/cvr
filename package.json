@@ -1,6 +1,6 @@
 {
   "name": "cvr",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/vokal/cvr.git"
@@ -23,7 +23,6 @@
     "jacoco-parse": "^1.0.0",
     "lcov-parse": "0.0.9",
     "mocha": "^2.2.4",
-    "nodegit": "^0.3.3",
     "request": "^2.69.0",
     "rimraf": "^2.3.3",
     "svg-shield": "^1.0.0"
