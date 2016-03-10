@@ -50,6 +50,11 @@ api.getRepos = function ( accessToken, done )
 
     api.getOrgs( accessToken, function ( err, orgs )
     {
+        if( err )
+        {
+            return done( err );
+        }
+
         var fetch = [];
 
         fetch.push( function ( done )
@@ -67,6 +72,11 @@ api.getRepos = function ( accessToken, done )
 
         a.parallelLimit( fetch, 5, function ( err, results )
         {
+            if( err )
+            {
+                return done( err );
+            }
+
             var flat = [];
             var flatIds = [];
 

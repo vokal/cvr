@@ -4,10 +4,17 @@ var assert = require( "assert" );
 var cvr = require( "../source" );
 var fs = require( "fs" );
 var path = require( "path" );
-require( "dotenv" ).load();
+var util = require( "util" );
+var nock = require( "nock" );
+var gitNock = nock( "https://api.github.com" );
 
-var accessToken = process.env.GITHUB_TOKEN;
-var webhookUrl = process.env.WEBHOOK_URL;
+nock.emitter.on( "no match", function ( req )
+{
+    console.log( req ); //makes debug a lot easier
+} );
+
+var accessToken = "12345";
+var webhookUrl = "https://cvr.vokal.io/webhook";
 var gitHubUser = "jrit";
 var gitHubRepoOwner = "vokal";
 var gitHubRepo = "cvr";
@@ -19,6 +26,18 @@ var getTestReporter = function ( sourceFile, format, coveredFile, linePercent )
 {
     return function ( done )
     {
+        gitNock
+            .get( util.format( "/repos/%s/%s/contents/%s",
+                gitHubUser, gitHubRepo, encodeURIComponent( coveredFile ) ) )
+            .query( { ref: "master", access_token: accessToken } )
+            .reply( 200, {
+                type: "file",
+                encoding: "base64",
+                name: coveredFile,
+                path: coveredFile,
+                content: fs.readFileSync( path.resolve( process.cwd(), coveredFile ) ).toString()
+            } );
+
         cvr.gitHub.getFile( accessToken, gitHubUser, gitHubRepo, null, coveredFile, function ( err, blob )
         {
             assert.equal( !!err, false, "err should be null: " + err );
@@ -51,10 +70,38 @@ describe( "git", function ()
 {
     it( "should get a list of repos from GitHub", function ( done )
     {
-        this.timeout( 20000 );
+        gitNock
+            .get( "/user/orgs" )
+            .query( { per_page: "100", access_token: accessToken } )
+            .reply( 200, [ {
+                "login": "github"
+            } ] );
+
+        gitNock
+            .get( "/orgs/github/repos" )
+            .query( { access_token: accessToken, per_page: 100, page: 1 } )
+            .reply( 200, [ {
+                "owner": {
+                    "login": "octocat"
+                },
+                "name": "Hello-World",
+                "full_name": "octocat/Hello-World"
+            } ] );
+
+        gitNock
+            .get( "/user/repos" )
+            .query( { access_token: accessToken, per_page: 100, page: 1 } )
+            .reply( 200, [ {
+                "owner": {
+                  "login": "octocat"
+                },
+                "name": "Hello-World",
+                "full_name": "octocat/Hello-World"
+            } ] );
+
         cvr.gitHub.getRepos( accessToken, function ( err, repos )
         {
-            assert( !err );
+            assert.equal( err, null );
             assert( repos.length > 0 );
             done();
         } );
@@ -62,9 +109,22 @@ describe( "git", function ()
 
     it( "should get a file from github", function ( done )
     {
-        cvr.gitHub.getFile( accessToken, gitHubRepoOwner, gitHubRepo, commitHash, "README.md", function ( err, res )
+        var fileName = "README.md";
+
+        gitNock
+            .get( util.format( "/repos/%s/%s/contents/%s", gitHubRepoOwner, gitHubRepo, fileName ) )
+            .query( { ref: commitHash, access_token: accessToken } )
+            .reply( 200, {
+                type: "file",
+                encoding: "base64",
+                name: fileName,
+                path: fileName,
+                content: fs.readFileSync( path.resolve( process.cwd(), fileName ) ).toString()
+            } );
+
+        cvr.gitHub.getFile( accessToken, gitHubRepoOwner, gitHubRepo, commitHash, fileName, function ( err, res )
         {
-            assert( !err );
+            assert.equal( err, null );
             assert( !!res );
             done();
         } );
@@ -120,6 +180,15 @@ describe( "git", function ()
 
     it( "should create a webhook", function ( done )
     {
+        gitNock
+            .get( util.format( "/repos/%s/%s/hooks", gitHubUser, gitHubRepo ) )
+            .query( { page: 1, per_page: 100, access_token: accessToken } )
+            .reply( 200, [ {
+                config: {
+                    url: webhookUrl
+                }
+            } ] );
+
         cvr.gitHub.createHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
@@ -130,6 +199,19 @@ describe( "git", function ()
 
     it( "should delete a webhook", function ( done )
     {
+        gitNock
+            .get( util.format( "/repos/%s/%s/hooks", gitHubUser, gitHubRepo ) )
+            .query( { page: 1, per_page: 100, access_token: accessToken } )
+            .reply( 200, [ {
+                id: 1,
+                config: {
+                    url: webhookUrl
+                }
+            } ] )
+            .delete( util.format( "/repos/%s/%s/hooks/1", gitHubUser, gitHubRepo ) )
+            .query( { access_token: accessToken } )
+            .reply( 200 );
+
         cvr.gitHub.deleteHook( accessToken, gitHubUser, gitHubRepo, webhookUrl, function ( err, res )
         {
             assert.equal( err, null );
@@ -140,6 +222,18 @@ describe( "git", function ()
 
     it( "should create a status", function ( done )
     {
+        gitNock
+            .post( util.format( "/repos/%s/%s/statuses/%s", gitHubUser, gitHubRepo, commitHash ) )
+            .query( { access_token: accessToken } )
+            .reply( 201, {
+                state: "pending"
+            } )
+            .post( util.format( "/repos/%s/%s/statuses/%s", gitHubUser, gitHubRepo, commitHash ) )
+            .query( { access_token: accessToken } )
+            .reply( 201, {
+                state: "success"
+            } );
+
         var statusMessage = {
             user: gitHubUser,
             repo: gitHubRepo,

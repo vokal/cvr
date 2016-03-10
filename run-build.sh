@@ -4,8 +4,13 @@ npm run testcover
 
 RESULT=$?
 
-GITHASH="$(git rev-parse HEAD)"
-curl -F coverage=@coverage/lcov.info "https://cvr.vokal.io/coverage?token=$CVR_TOKEN&commit=$GITHASH&removepath=/var/cache/drone/src/github.com/vokal/cvr/&coveragetype=lcov"
+COMMIT="${TRAVIS_COMMIT_RANGE##*...}"
+
+if [ $RESULT == 0 ]; then
+  echo "publish coverage for $COMMIT"
+  curl -F coverage=@coverage/lcov.info "https://cvr.vokal.io/coverage?owner=$REPO_OWNER&repo=$REPO_NAME&commit=$COMMIT&coveragetype=lcov"
+else
+  curl -X POST "https://cvr.vokal.io/coverage/abort?owner=$REPO_OWNER&repo=$REPO_NAME&commit=$COMMIT"
+fi
 
 exit $RESULT
-
