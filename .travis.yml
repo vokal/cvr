@@ -1,11 +1,15 @@
-image: docker.vokal.io/web-testing
-build:
-  image: registry.vokal.io/web-testing
-  environment:
+language: node_js
+node_js:
+  - "0.10"
+  - "0.12"
+  - "node"
+env:
+  global:
     - REPO_OWNER=vokal
     - REPO_NAME=cvr
-  commands:
-    - npm install --silent -g istanbul
-    - npm install --silent
-    - chmod +x run-build.sh
-    - ./run-build.sh
+install:
+  - npm install -g istanbul
+  - npm install
+script:
+  - chmod +x run-build.sh
+  - ./run-build.sh
