@@ -19,7 +19,7 @@
     "cobertura-parse": "1.x",
     "github": "^0.2.4",
     "golang-cover-parse": "^1.0.0",
-    "handlebars": "^3.0.3",
+    "handlebars": "^4.0.12",
     "jacoco-parse": "^1.0.0",
     "lcov-parse": "0.0.9",
     "mocha": "^2.2.4",
