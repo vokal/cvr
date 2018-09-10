@@ -28,6 +28,6 @@
     "svg-shield": "^1.0.0"
   },
   "devDependencies": {
-    "nock": "^7.2.2"
+    "nock": "^9.0.0"
   }
 }
