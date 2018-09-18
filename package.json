@@ -1,6 +1,6 @@
 {
   "name": "cvr",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/vokal/cvr.git"
@@ -14,20 +14,20 @@
     "testcover": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec"
   },
   "dependencies": {
-    "async": "^0.9.0",
-    "atob": "^1.1.2",
-    "cobertura-parse": "1.x",
+    "async": "^2.6.1",
+    "atob": "^2.1.2",
+    "cobertura-parse": "^1.0.5",
     "github": "^0.2.4",
-    "golang-cover-parse": "^1.0.0",
+    "golang-cover-parse": "^2.0.0",
     "handlebars": "^4.0.12",
-    "jacoco-parse": "^1.0.0",
-    "lcov-parse": "0.0.9",
-    "mocha": "^2.2.4",
-    "request": "^2.69.0",
-    "rimraf": "^2.3.3",
-    "svg-shield": "^1.0.0"
+    "jacoco-parse": "^2.0.0",
+    "lcov-parse": "^1.0.0",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0",
+    "rimraf": "^2.6.2",
+    "svg-shield": "^2.0.0"
   },
   "devDependencies": {
-    "nock": "^9.0.0"
+    "nock": "^10.0.0"
   }
 }
